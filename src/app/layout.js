@@ -3,9 +3,9 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.app',
+  title: 'WhatsApp-Powered Online Store SaaS',
+  description: 'A lightweight SaaS platform that helps small businesses create online product catalogs and receive customer orders directly through WhatsApp.',
+  generator: 'WhatsApp-Powered Online Store SaaS',
   icons: {
     icon: [
       {
