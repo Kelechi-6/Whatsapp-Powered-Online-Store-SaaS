@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import { Store, ArrowRight, Check, X } from 'lucide-react'
 
-export default function SetupPage() {
+function SetupContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [selectedPlan, setSelectedPlan] = useState(null)
@@ -222,5 +222,13 @@ export default function SetupPage() {
         )}
       </section>
     </main>
+  )
+}
+
+export default function SetupPage() {
+  return (
+    <Suspense fallback={<main className="dashboard-shell"><div className="dashboard-loading">Loading...</div></main>}>
+      <SetupContent />
+    </Suspense>
   )
 }

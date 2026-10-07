@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import { Check, ArrowRight, Sparkles, Zap, Crown } from 'lucide-react'
@@ -51,7 +51,7 @@ function getFeatureList(planId) {
 
 const planOrder = ['free', 'starter', 'pro']
 
-export default function SubscriptionPage() {
+function SubscriptionContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isUpgrade, setIsUpgrade] = useState(false)
@@ -63,7 +63,7 @@ export default function SubscriptionPage() {
   useEffect(() => {
     const upgrade = searchParams.get('upgrade')
     setIsUpgrade(upgrade === 'true')
-    
+
     // Fetch current subscription if upgrading
     if (upgrade === 'true') {
       fetchCurrentSubscription()
@@ -280,5 +280,13 @@ export default function SubscriptionPage() {
         </div>
       </section>
     </main>
+  )
+}
+
+export default function SubscriptionPage() {
+  return (
+    <Suspense fallback={<main className="dashboard-shell"><div className="dashboard-loading">Loading...</div></main>}>
+      <SubscriptionContent />
+    </Suspense>
   )
 }
