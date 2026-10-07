@@ -97,7 +97,7 @@ export default function Page() {
   return (
     <main className="site-shell">
       <nav className="nav-wrap" aria-label="Main navigation">
-        <a href="#top" className="brand"><span className="brand-mark"><Store size={18} /></span>shopmini</a>
+        <a href="#top" className="brand"><span className="brand-mark"><Store size={18} /></span>Shopmini</a>
         <div className={`nav-links ${menuOpen ? 'is-open' : ''}`}>
           <a href="#how-it-works">How it works</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a>
           <a href="/auth/login" className="nav-login">Log in</a>

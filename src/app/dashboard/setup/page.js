@@ -142,7 +142,7 @@ function SetupContent() {
     <main className="auth-shell">
       <section className="auth-card">
         <a href="/dashboard" className="brand">
-          <span className="brand-mark"><Store size={18} /></span>shopmini
+          <span className="brand-mark"><Store size={18} /></span>Shopmini
         </a>
         
         <div className="auth-heading">

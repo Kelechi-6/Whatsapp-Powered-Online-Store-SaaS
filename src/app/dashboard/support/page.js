@@ -60,7 +60,7 @@ export default function SupportPage() {
   return (
     <main className="dashboard-shell">
       <header className="dashboard-top">
-        <a href="/" className="brand"><span className="brand-mark">s</span>shopmini</a>
+        <a href="/" className="brand"><span className="brand-mark">s</span>Shopmini</a>
         <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
       </header>
       <section className="dashboard-content">
@@ -145,7 +145,7 @@ export default function SupportPage() {
                 cursor: 'pointer',
                 transition: 'all 0.2s'
               }}
-              onClick={() => window.location.href = 'https://wa.me/2348000000000'}
+              onClick={() => window.location.href = 'https://wa.me/2349033282350'}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                   <div style={{
@@ -161,7 +161,7 @@ export default function SupportPage() {
                   </div>
                   <div>
                     <h3 style={{ margin: 0, fontSize: '16px' }}>WhatsApp Support</h3>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#6b7280' }}>+234 800 000 0000</p>
+                    <p style={{ margin: 0, fontSize: '13px', color: '#6b7280' }}>+234 903 328 2350</p>
                   </div>
                 </div>
                 <p style={{ fontSize: '14px', color: '#374151', marginBottom: '12px' }}>

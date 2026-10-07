@@ -117,7 +117,7 @@ export default function DashboardPage() {
   return (
     <main className="dashboard-shell">
       <header className="dashboard-top">
-        <a href="/" className="brand"><span className="brand-mark">s</span>shopmini</a>
+        <a href="/" className="brand"><span className="brand-mark">s</span>Shopmini</a>
         <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
       </header>
       <section className="dashboard-content">
