@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
-import { Plus, Edit, Trash2, Store, ArrowRight, X, Image as ImageIcon, Lock, Upload } from 'lucide-react'
+import { Plus, Edit, Trash2, Store, ArrowRight, X, Image as ImageIcon, Lock, Upload, Menu } from 'lucide-react'
 import { canAddProduct, getRemainingProducts, hasFeature } from '../../../lib/plans'
 
 export default function ProductsPage() {
@@ -14,7 +14,8 @@ export default function ProductsPage() {
   const [showForm, setShowForm] = useState(false)
   const [editingProduct, setEditingProduct] = useState(null)
   const [status, setStatus] = useState({ error: '', loading: true, success: '' })
-  
+  const [menuOpen, setMenuOpen] = useState(false)
+
   const [form, setForm] = useState({
     name: '',
     price: '',
@@ -209,7 +210,16 @@ export default function ProductsPage() {
     <main className="dashboard-shell">
       <header className="dashboard-top">
         <a href="/" className="brand"><span className="brand-mark">s</span>shopmini</a>
-        <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            className="dashboard-mobile-menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        </div>
       </header>
       <section className="dashboard-content">
         <div className="dashboard-header">
@@ -217,10 +227,11 @@ export default function ProductsPage() {
             <h1>Products</h1>
             <p>Manage your product catalog</p>
           </div>
-          <div className="dashboard-nav">
-            <a href="/dashboard" className="nav-link">Dashboard</a>
+          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+            <a href="/dashboard" className="nav-link">Go back</a>
             {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
           </div>
+          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
         </div>
 
         {status.error && <p className="auth-error">{status.error}</p>}

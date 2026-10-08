@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
-import { Palette, Layout, Lock, ArrowRight, Save } from 'lucide-react'
+import { Palette, Layout, Lock, ArrowRight, Save, Menu, X } from 'lucide-react'
 import { UpgradePrompt } from '../../../components/UpgradePrompt'
 
 export default function CustomizationPage() {
@@ -14,6 +14,7 @@ export default function CustomizationPage() {
   const [saving, setSaving] = useState(false)
   const [success, setSuccess] = useState('')
   const [products, setProducts] = useState([])
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const [customization, setCustomization] = useState({
     theme: 'default',
@@ -121,7 +122,16 @@ export default function CustomizationPage() {
     <main className="dashboard-shell">
       <header className="dashboard-top">
         <a href="/" className="brand"><span className="brand-mark">s</span>Shopmini</a>
-        <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            className="dashboard-mobile-menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        </div>
       </header>
       <section className="dashboard-content">
         <div className="dashboard-header">
@@ -129,10 +139,11 @@ export default function CustomizationPage() {
             <h1>Store Customization</h1>
             <p>Customize your storefront appearance and layout</p>
           </div>
-          <div className="dashboard-nav">
-            <a href="/dashboard" className="nav-link">Dashboard</a>
+          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+            <a href="/dashboard" className="nav-link">Go back</a>
             {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
           </div>
+          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
         </div>
 
         {!hasAdvancedCustomization && (

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../lib/supabase/client'
-import { Copy, Check, ArrowRight } from 'lucide-react'
+import { Copy, Check, ArrowRight, Menu, X } from 'lucide-react'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -14,6 +14,7 @@ export default function DashboardPage() {
   const [orders, setOrders] = useState(0)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     loadDashboardData()
@@ -118,7 +119,16 @@ export default function DashboardPage() {
     <main className="dashboard-shell">
       <header className="dashboard-top">
         <a href="/" className="brand"><span className="brand-mark">s</span>Shopmini</a>
-        <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            className="dashboard-mobile-menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        </div>
       </header>
       <section className="dashboard-content">
         <div className="dashboard-header">
@@ -126,7 +136,7 @@ export default function DashboardPage() {
             <h1>Dashboard</h1>
             <p>Welcome back, {user?.user_metadata?.owner_name || 'there'}</p>
           </div>
-          <div className="dashboard-nav">
+          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
             <a href="/dashboard" className="nav-link">Dashboard</a>
             <a href="/dashboard/products" className="nav-link">Products</a>
             <a href="/dashboard/analytics" className="nav-link">Analytics</a>
@@ -134,6 +144,7 @@ export default function DashboardPage() {
             <a href="/dashboard/support" className="nav-link">Support</a>
             {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
           </div>
+          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
         </div>
 
         <div className="dashboard-welcome">

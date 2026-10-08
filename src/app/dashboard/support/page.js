@@ -3,13 +3,15 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
-import { MessageCircle, Mail, Phone, ArrowRight, Lock, Star, Clock } from 'lucide-react'
+import { MessageCircle, Mail, Phone, ArrowRight, Lock, Star, Clock, Menu, X, ChevronDown } from 'lucide-react'
 import { UpgradePrompt } from '../../../components/UpgradePrompt'
 
 export default function SupportPage() {
   const router = useRouter()
   const [subscription, setSubscription] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [openFaq, setOpenFaq] = useState(null)
 
   useEffect(() => {
     loadSubscription()
@@ -61,7 +63,16 @@ export default function SupportPage() {
     <main className="dashboard-shell">
       <header className="dashboard-top">
         <a href="/" className="brand"><span className="brand-mark">s</span>Shopmini</a>
-        <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            className="dashboard-mobile-menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        </div>
       </header>
       <section className="dashboard-content">
         <div className="dashboard-header">
@@ -69,9 +80,10 @@ export default function SupportPage() {
             <h1>Support</h1>
             <p>Get help with your store</p>
           </div>
-          <div className="dashboard-nav">
-            <a href="/dashboard" className="nav-link">Dashboard</a>
+          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+            <a href="/dashboard" className="nav-link">Go back</a>
           </div>
+          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
         </div>
 
         {!hasPrioritySupport && (
@@ -213,24 +225,57 @@ export default function SupportPage() {
             }}>
               <h3 style={{ marginBottom: '16px' }}>Frequently Asked Questions</h3>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '6px' }}>
-                  <strong style={{ display: 'block', marginBottom: '4px' }}>How do I upgrade my plan?</strong>
-                  <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    Go to your dashboard and click "Upgrade" next to your current plan, or visit the subscription page.
-                  </p>
-                </div>
-                <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '6px' }}>
-                  <strong style={{ display: 'block', marginBottom: '4px' }}>How do I add products?</strong>
-                  <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    Navigate to the Products page and click "Add Product". You can also use bulk upload if on Starter or Pro plan.
-                  </p>
-                </div>
-                <div style={{ padding: '12px', background: '#f9fafb', borderRadius: '6px' }}>
-                  <strong style={{ display: 'block', marginBottom: '4px' }}>How do I customize my store?</strong>
-                  <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
-                    Go to the Setup page to update your store name, description, category, and location.
-                  </p>
-                </div>
+                {[
+                  {
+                    id: 1,
+                    question: 'How do I upgrade my plan?',
+                    answer: 'Go to your dashboard and click "Upgrade" next to your current plan, or visit the subscription page.'
+                  },
+                  {
+                    id: 2,
+                    question: 'How do I add products?',
+                    answer: 'Navigate to the Products page and click "Add Product". You can also use bulk upload if on Starter or Pro plan.'
+                  },
+                  {
+                    id: 3,
+                    question: 'How do I customize my store?',
+                    answer: 'Go to the Setup page to update your store name, description, category, and location.'
+                  }
+                ].map(faq => (
+                  <div key={faq.id} style={{ border: '1px solid #e5e7eb', borderRadius: '6px', overflow: 'hidden' }}>
+                    <button
+                      onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        background: '#f9fafb',
+                        border: 'none',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        color: '#374151',
+                        textAlign: 'left'
+                      }}
+                    >
+                      {faq.question}
+                      <ChevronDown
+                        size={16}
+                        style={{
+                          transition: 'transform 0.2s',
+                          transform: openFaq === faq.id ? 'rotate(180deg)' : 'rotate(0deg)'
+                        }}
+                      />
+                    </button>
+                    {openFaq === faq.id && (
+                      <div style={{ padding: '12px 16px', background: 'white', fontSize: '14px', color: '#6b7280' }}>
+                        {faq.answer}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </>

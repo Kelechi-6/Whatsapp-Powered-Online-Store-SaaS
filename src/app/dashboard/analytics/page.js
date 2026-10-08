@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
-import { BarChart3, Eye, ShoppingBag, MessageCircle, TrendingUp, Calendar, Lock, ArrowRight } from 'lucide-react'
+import { BarChart3, Eye, ShoppingBag, MessageCircle, TrendingUp, Calendar, Lock, ArrowRight, Menu, X } from 'lucide-react'
 import { UpgradePrompt } from '../../../components/UpgradePrompt'
 
 export default function AnalyticsPage() {
@@ -14,6 +14,7 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true)
   const [timeRange, setTimeRange] = useState('7d') // 7d, 30d, 90d
   const [hasReports, setHasReports] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     loadAnalyticsData()
@@ -126,7 +127,16 @@ export default function AnalyticsPage() {
     <main className="dashboard-shell">
       <header className="dashboard-top">
         <a href="/" className="brand"><span className="brand-mark">s</span>Shopmini</a>
-        <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <button
+            className="dashboard-mobile-menu"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <form action="/auth/sign-out" method="post"><button className="auth-reset">Log out</button></form>
+        </div>
       </header>
       <section className="dashboard-content">
         <div className="dashboard-header">
@@ -134,10 +144,11 @@ export default function AnalyticsPage() {
             <h1>Analytics</h1>
             <p>Track your store performance</p>
           </div>
-          <div className="dashboard-nav">
-            <a href="/dashboard" className="nav-link">Dashboard</a>
+          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+            <a href="/dashboard" className="nav-link">Go back</a>
             {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
           </div>
+          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
         </div>
 
         {!hasAnalytics && (
