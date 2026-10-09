@@ -10,11 +10,18 @@ export default function DashboardPage() {
   const [user, setUser] = useState(null)
   const [business, setBusiness] = useState(null)
   const [subscription, setSubscription] = useState(null)
-  const [products, setProducts] = useState(0)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const getTimeGreeting = () => {
+    const hour = new Date().getHours()
+    if (hour < 12) return 'Good morning'
+    if (hour < 17) return 'Good afternoon'
+    return 'Good evening'
+  }
   const [orders, setOrders] = useState(0)
+  const [products, setProducts] = useState(0)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     loadDashboardData()
@@ -63,6 +70,8 @@ export default function DashboardPage() {
           const subData = await response.json()
 
           console.log('Subscription data from API:', subData)
+          console.log('Start date:', subData?.start_date)
+          console.log('End date:', subData?.end_date)
           // Set subscription data, or default to free if none exists
           setSubscription(subData || { plan: 'free', status: 'active' })
         } catch (error) {
@@ -150,37 +159,56 @@ export default function DashboardPage() {
         <div className="dashboard-welcome">
           <div>
             <span className="kicker">YOUR STORE DASHBOARD</span>
-            <h1>Good morning, {user?.user_metadata?.owner_name || 'there'}.</h1>
+            <h1>{getTimeGreeting()}, {user?.user_metadata?.owner_name || 'there'}.</h1>
             <p>{business ? 'Here\'s how your store is doing.' : 'Your account is ready. Complete your store setup to start selling.'}</p>
-            {subscription && (
-              <div style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{
-                  display: 'inline-block',
-                  background: 'var(--mint)',
-                  color: '#2d6d5e',
-                  padding: '6px 12px',
-                  borderRadius: '20px',
-                  fontSize: '11px',
-                  fontWeight: '700',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.05em'
-                }}>
-                  {subscription.plan} Plan
+            {subscription && subscription.plan !== 'free' && (
+              <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <div style={{
+                    display: 'inline-block',
+                    background: 'var(--mint)',
+                    color: '#2d6d5e',
+                    padding: '6px 12px',
+                    borderRadius: '20px',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em'
+                  }}>
+                    {subscription.plan} Plan
+                  </div>
+                  <button
+                    onClick={() => router.push('/dashboard/subscription?upgrade=true')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: 'var(--green)',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      textDecoration: 'underline'
+                    }}
+                  >
+                    Upgrade
+                  </button>
                 </div>
-                <button
-                  onClick={() => router.push('/dashboard/subscription?upgrade=true')}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--green)',
+                {subscription.start_date && subscription.end_date && (
+                  <div style={{
                     fontSize: '12px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    textDecoration: 'underline'
-                  }}
-                >
-                  Upgrade
-                </button>
+                    color: '#6b7280',
+                    background: '#f9fafb',
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid #e5e7eb'
+                  }}>
+                    <div style={{ marginBottom: '4px' }}>
+                      <strong>Started:</strong> {new Date(subscription.start_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </div>
+                    <div>
+                      <strong>Expires:</strong> {new Date(subscription.end_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

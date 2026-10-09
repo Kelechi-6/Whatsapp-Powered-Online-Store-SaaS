@@ -36,13 +36,21 @@ export async function POST(request) {
       .limit(1)
 
     if (existingSub && existingSub.length > 0) {
+      // Calculate end date based on plan (1 month for paid plans)
+      const startDate = new Date().toISOString()
+      const endDate = new Date()
+      endDate.setMonth(endDate.getMonth() + 1)
+      const endDateISO = endDate.toISOString()
+
       // Update existing subscription with business_id and plan
       const { error: updateError } = await supabaseAdmin
         .from('subscriptions')
         .update({
           business_id: businessId,
           plan: plan,
-          status: 'active'
+          status: 'active',
+          start_date: startDate,
+          end_date: endDateISO
         })
         .eq('id', existingSub[0].id)
 
@@ -62,12 +70,20 @@ export async function POST(request) {
         .maybeSingle()
 
       if (businessSub) {
+        // Calculate end date based on plan (1 month for paid plans)
+        const startDate = new Date().toISOString()
+        const endDate = new Date()
+        endDate.setMonth(endDate.getMonth() + 1)
+        const endDateISO = endDate.toISOString()
+
         // Update existing subscription
         const { error: updateError } = await supabaseAdmin
           .from('subscriptions')
           .update({
             plan: plan,
-            status: 'active'
+            status: 'active',
+            start_date: startDate,
+            end_date: endDateISO
           })
           .eq('id', businessSub.id)
 
@@ -79,6 +95,12 @@ export async function POST(request) {
           )
         }
       } else {
+        // Calculate end date based on plan (1 month for paid plans)
+        const startDate = new Date().toISOString()
+        const endDate = new Date()
+        endDate.setMonth(endDate.getMonth() + 1)
+        const endDateISO = endDate.toISOString()
+
         // Create new subscription
         const { error: insertError } = await supabaseAdmin
           .from('subscriptions')
@@ -86,7 +108,9 @@ export async function POST(request) {
             business_id: businessId,
             plan: plan,
             status: 'active',
-            payment_reference: null
+            payment_reference: null,
+            start_date: startDate,
+            end_date: endDateISO
           })
 
         if (insertError) {

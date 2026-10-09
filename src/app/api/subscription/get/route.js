@@ -36,6 +36,50 @@ export async function GET(request) {
       .maybeSingle()
 
     if (subData) {
+      // Check if subscription has expired
+      if (subData.end_date && new Date(subData.end_date) < new Date()) {
+        // Subscription has expired, downgrade to free plan
+        const { error: updateError } = await supabaseAdmin
+          .from('subscriptions')
+          .update({
+            plan: 'free',
+            status: 'active',
+            end_date: null
+          })
+          .eq('id', subData.id)
+
+        if (!updateError) {
+          // Return updated free plan subscription
+          return NextResponse.json({
+            ...subData,
+            plan: 'free',
+            end_date: null
+          })
+        }
+      }
+
+      // If subscription is missing start_date or end_date (for existing subscriptions), add them
+      if (!subData.start_date || !subData.end_date) {
+        const startDate = new Date().toISOString()
+        const endDate = new Date()
+        endDate.setMonth(endDate.getMonth() + 1)
+        const endDateISO = endDate.toISOString()
+
+        const { data: updatedSub } = await supabaseAdmin
+          .from('subscriptions')
+          .update({
+            start_date: startDate,
+            end_date: endDateISO
+          })
+          .eq('id', subData.id)
+          .select()
+          .single()
+
+        if (updatedSub) {
+          return NextResponse.json(updatedSub)
+        }
+      }
+
       return NextResponse.json(subData)
     }
 

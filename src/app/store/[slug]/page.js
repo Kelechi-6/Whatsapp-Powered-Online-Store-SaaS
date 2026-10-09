@@ -602,15 +602,15 @@ export default function StorePage() {
               style={{
                 background: 'white',
                 borderRadius: '12px',
-                maxWidth: '900px',
+                maxWidth: '500px',
                 width: '100%',
                 maxHeight: '90vh',
                 overflow: 'auto',
                 position: 'relative',
-                display: 'grid',
-                gridTemplateColumns: '1fr 1fr',
-                gap: '32px',
-                padding: '32px'
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '24px',
+                padding: '24px'
               }}
               onClick={(e) => e.stopPropagation()}
             >
