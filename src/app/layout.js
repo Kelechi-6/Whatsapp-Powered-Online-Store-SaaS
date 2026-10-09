@@ -3,25 +3,12 @@
 import './globals.css'
 
 export const metadata = {
-  title: 'WhatsApp-Powered Online Store SaaS',
+  title: 'Shopmini',
   description: 'A lightweight SaaS platform that helps small businesses create online product catalogs and receive customer orders directly through WhatsApp.',
   generator: 'WhatsApp-Powered Online Store SaaS',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/favicon.svg',
+    apple: '/favicon.svg',
   },
 }
 
