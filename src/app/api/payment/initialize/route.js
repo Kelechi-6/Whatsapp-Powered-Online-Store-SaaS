@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 export async function POST(request) {
   try {
     const body = await request.json()
-    const { email, amount, plan, userId } = body
+    const { email, amount, plan, userId, isUpgrade } = body
 
     if (!email || !amount || !plan || !userId) {
       return NextResponse.json(
@@ -22,8 +22,11 @@ export async function POST(request) {
     }
 
     // Initialize Paystack transaction
-    const baseUrl = request.headers.get('host') ? `https://${request.headers.get('host')}` : 'http://localhost:3000'
-    const protocol = request.headers.get('x-forwarded-proto') || 'https'
+    const host = request.headers.get('host')
+    const protocol = request.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https')
+    const callbackUrl = `${protocol}://${host}/api/payment/verify`
+
+    console.log('Payment callback URL:', callbackUrl)
 
     const response = await fetch('https://api.paystack.co/transaction/initialize', {
       method: 'POST',
@@ -36,9 +39,10 @@ export async function POST(request) {
         amount,
         metadata: {
           plan,
-          userId
+          userId,
+          isUpgrade: isUpgrade || false
         },
-        callback_url: `${protocol}://${request.headers.get('host')}/api/payment/verify`
+        callback_url: callbackUrl
       }),
     })
 

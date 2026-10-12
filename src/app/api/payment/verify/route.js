@@ -21,9 +21,17 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url)
     const reference = searchParams.get('reference')
 
+    // Get the base URL from the request
+    const host = request.headers.get('host')
+    const protocol = request.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https')
+    const baseUrl = `${protocol}://${host}`
+
+    console.log('Verify request - Base URL:', baseUrl)
+    console.log('Verify request - Full URL:', request.url)
+
     if (!reference) {
       return NextResponse.redirect(
-        new URL('/dashboard/subscription?error=missing_reference', request.url)
+        new URL('/dashboard/subscription?error=missing_reference', baseUrl)
       )
     }
 
@@ -44,7 +52,7 @@ export async function GET(request) {
 
     if (!response.ok || !data.status || data.data.status !== 'success') {
       return NextResponse.redirect(
-        new URL('/dashboard/subscription?error=payment_failed', request.url)
+        new URL('/dashboard/subscription?error=payment_failed', baseUrl)
       )
     }
 
@@ -67,7 +75,7 @@ export async function GET(request) {
 
       if (!businessData) {
         console.error('No business found for user:', userId)
-        return NextResponse.redirect(new URL('/dashboard/setup', request.url))
+        return NextResponse.redirect(new URL('/dashboard/setup', baseUrl))
       }
 
       console.log('Updating subscription for business:', businessData.id, 'to plan:', plan)
@@ -83,13 +91,13 @@ export async function GET(request) {
       if (subError) {
         console.error('Subscription update error:', subError)
         return NextResponse.redirect(
-          new URL('/dashboard/subscription?error=subscription_failed', request.url)
+          new URL('/dashboard/subscription?error=subscription_failed', baseUrl)
         )
       }
 
       console.log('Subscription updated successfully')
       // Redirect to dashboard
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+      return NextResponse.redirect(new URL('/dashboard', baseUrl))
     } else {
       // Check if user already has a business
       const { data: businessData } = await supabase
@@ -122,7 +130,7 @@ export async function GET(request) {
           if (subError) {
             console.error('Subscription update error:', subError)
             return NextResponse.redirect(
-              new URL('/dashboard/subscription?error=subscription_failed', request.url)
+              new URL('/dashboard/subscription?error=subscription_failed', baseUrl)
             )
           }
         } else {
@@ -139,14 +147,14 @@ export async function GET(request) {
           if (subError) {
             console.error('Subscription creation error:', subError)
             return NextResponse.redirect(
-              new URL('/dashboard/subscription?error=subscription_failed', request.url)
+              new URL('/dashboard/subscription?error=subscription_failed', baseUrl)
             )
           }
         }
 
         console.log('Subscription created/updated successfully, redirecting to dashboard')
         // Redirect to dashboard
-        return NextResponse.redirect(new URL('/dashboard', request.url))
+        return NextResponse.redirect(new URL('/dashboard', baseUrl))
       } else {
         // User has no business, create subscription with null business_id and redirect to setup
         console.log('User has no business, redirecting to setup')
@@ -161,20 +169,23 @@ export async function GET(request) {
         if (subError) {
           console.error('Subscription creation error:', subError)
           return NextResponse.redirect(
-            new URL('/dashboard/subscription?error=subscription_failed', request.url)
+            new URL('/dashboard/subscription?error=subscription_failed', baseUrl)
           )
         }
 
         // Redirect to setup
         return NextResponse.redirect(
-          new URL(`/dashboard/setup?plan=${plan}`, request.url)
+          new URL(`/dashboard/setup?plan=${plan}`, baseUrl)
         )
       }
     }
   } catch (error) {
     console.error('Payment verification error:', error)
+    const host = request.headers.get('host')
+    const protocol = request.headers.get('x-forwarded-proto') || (host?.includes('localhost') ? 'http' : 'https')
+    const baseUrl = `${protocol}://${host}`
     return NextResponse.redirect(
-      new URL('/dashboard/subscription?error=verification_failed', request.url)
+      new URL('/dashboard/subscription?error=verification_failed', baseUrl)
     )
   }
 }
