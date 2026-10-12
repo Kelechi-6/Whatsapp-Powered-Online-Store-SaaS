@@ -75,24 +75,16 @@ export default function StorePage() {
         setHasAnalytics(false)
       }
 
-      // Increment view count and track analytics
-      await supabase
-        .from('businesses')
-        .update({ views: (businessData.views || 0) + 1 })
-        .eq('id', businessData.id)
-
-      // Track store view if analytics is enabled
-      if (hasAnalytics) {
-        await fetch('/api/analytics/track', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            businessId: businessData.id,
-            type: 'view',
-            metadata: { slug: params.slug }
-          })
+      // Track store view in analytics table (always, not just for paid plans)
+      await fetch('/api/analytics/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          businessId: businessData.id,
+          type: 'view',
+          metadata: { slug: params.slug }
         })
-      }
+      })
 
       const { data: productsData } = await supabase
         .from('products')
@@ -209,22 +201,20 @@ export default function StorePage() {
   function checkoutWhatsApp() {
     if (!business || cart.length === 0) return
 
-    // Track WhatsApp click if analytics is enabled
-    if (hasAnalytics && business) {
-      fetch('/api/analytics/track', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          businessId: business.id,
-          type: 'whatsapp_click',
-          metadata: {
-            cartTotal: cartTotal,
-            cartCount: cartCount,
-            items: cart.map(item => ({ id: item.id, name: item.name, quantity: item.quantity }))
-          }
-        })
+    // Track order in analytics table (always, not just for paid plans)
+    fetch('/api/analytics/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        businessId: business.id,
+        type: 'order',
+        metadata: {
+          cartTotal: cartTotal,
+          cartCount: cartCount,
+          items: cart.map(item => ({ id: item.id, name: item.name, quantity: item.quantity }))
+        }
       })
-    }
+    })
 
     const message = cart.map(item =>
       `• ${item.name} x${item.quantity} - ₦${(item.price * item.quantity).toLocaleString()}`

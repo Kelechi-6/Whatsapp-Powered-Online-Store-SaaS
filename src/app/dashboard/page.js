@@ -20,6 +20,7 @@ export default function DashboardPage() {
   }
   const [orders, setOrders] = useState(0)
   const [products, setProducts] = useState(0)
+  const [views, setViews] = useState(0)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
 
@@ -92,8 +93,18 @@ export default function DashboardPage() {
           .select('id', { count: 'exact', head: true })
           .eq('business_id', businessData.id)
 
+        // Get today's views from analytics table
+        const today = new Date().toISOString().split('T')[0]
+        const { count: viewsCount } = await supabase
+          .from('analytics')
+          .select('id', { count: 'exact', head: true })
+          .eq('business_id', businessData.id)
+          .eq('type', 'view')
+          .gte('created_at', today)
+
         setProducts(productsCount || 0)
         setOrders(ordersCount || 0)
+        setViews(viewsCount || 0)
       }
     } catch (error) {
       console.error('Error loading dashboard:', error)
@@ -231,8 +242,8 @@ export default function DashboardPage() {
           <>
             <div className="dashboard-stats">
               <div>
-                <small>STORE VIEWS</small>
-                <strong>{business?.views || 0}</strong>
+                <small>STORE VIEWS TODAY</small>
+                <strong>{views}</strong>
                 <span>Start sharing your link</span>
               </div>
               <a href="/dashboard/products" className="stat-clickable">

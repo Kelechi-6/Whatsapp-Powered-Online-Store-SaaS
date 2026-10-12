@@ -79,7 +79,6 @@ export default function AnalyticsPage() {
   const metrics = {
     totalViews: analytics.filter(a => a.type === 'view').length,
     productViews: analytics.filter(a => a.type === 'product_view').length,
-    whatsappClicks: analytics.filter(a => a.type === 'whatsapp_click').length,
     orders: analytics.filter(a => a.type === 'order').length,
   }
 
@@ -202,14 +201,6 @@ export default function AnalyticsPage() {
                   <span style={{ fontSize: '14px', color: '#6b7280' }}>Product Views</span>
                 </div>
                 <strong style={{ fontSize: '28px', color: '#111827' }}>{metrics.productViews}</strong>
-              </div>
-
-              <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <MessageCircle size={20} style={{ color: '#10b981' }} />
-                  <span style={{ fontSize: '14px', color: '#6b7280' }}>WhatsApp Clicks</span>
-                </div>
-                <strong style={{ fontSize: '28px', color: '#111827' }}>{metrics.whatsappClicks}</strong>
               </div>
 
               <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
