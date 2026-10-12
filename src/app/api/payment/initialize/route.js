@@ -22,6 +22,9 @@ export async function POST(request) {
     }
 
     // Initialize Paystack transaction
+    const baseUrl = request.headers.get('host') ? `https://${request.headers.get('host')}` : 'http://localhost:3000'
+    const protocol = request.headers.get('x-forwarded-proto') || 'https'
+
     const response = await fetch('https://api.paystack.co/transaction/initialize', {
       method: 'POST',
       headers: {
@@ -35,7 +38,7 @@ export async function POST(request) {
           plan,
           userId
         },
-        callback_url: `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/payment/verify`
+        callback_url: `${protocol}://${request.headers.get('host')}/api/payment/verify`
       }),
     })
 
