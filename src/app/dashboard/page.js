@@ -172,13 +172,13 @@ export default function DashboardPage() {
             <span className="kicker">YOUR STORE DASHBOARD</span>
             <h1>{getTimeGreeting()}, {user?.user_metadata?.owner_name || 'there'}.</h1>
             <p>{business ? 'Here\'s how your store is doing.' : 'Your account is ready. Complete your store setup to start selling.'}</p>
-            {subscription && subscription.plan !== 'free' && (
+            {subscription && (
               <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{
                     display: 'inline-block',
-                    background: 'var(--mint)',
-                    color: '#2d6d5e',
+                    background: subscription.plan === 'free' ? '#e5e7eb' : 'var(--mint)',
+                    color: subscription.plan === 'free' ? '#374151' : '#2d6d5e',
                     padding: '6px 12px',
                     borderRadius: '20px',
                     fontSize: '11px',
@@ -200,10 +200,10 @@ export default function DashboardPage() {
                       textDecoration: 'underline'
                     }}
                   >
-                    Upgrade
+                    {subscription.plan === 'free' ? 'Upgrade' : 'Upgrade'}
                   </button>
                 </div>
-                {subscription.start_date && subscription.end_date && (
+                {subscription.plan !== 'free' && subscription.start_date && subscription.end_date && (
                   <div style={{
                     fontSize: '12px',
                     color: '#6b7280',
