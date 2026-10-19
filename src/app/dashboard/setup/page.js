@@ -48,6 +48,13 @@ function SetupContent() {
         .replace(/^-|-$/g, '')
         + '-' + Math.random().toString(36).substr(2, 9)
 
+      // Format WhatsApp number with +234 country code
+      let formattedWhatsApp = form.whatsappNumber.trim().replace(/\D/g, '') // Remove all non-digits
+      if (formattedWhatsApp.startsWith('0')) {
+        formattedWhatsApp = formattedWhatsApp.substring(1) // Remove leading 0
+      }
+      formattedWhatsApp = `+234${formattedWhatsApp}` // Add country code
+
       // Check if business already exists
       const { data: existingBusiness } = await supabase
         .from('businesses')
@@ -68,7 +75,7 @@ function SetupContent() {
           name: form.storeName.trim(),
           slug: slug,
           category: form.category,
-          whatsapp_number: form.whatsappNumber.trim(),
+          whatsapp_number: formattedWhatsApp,
           description: form.description.trim(),
           location: form.location.trim(),
           is_active: true

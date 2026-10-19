@@ -8,6 +8,7 @@ import { UpgradePrompt } from '../../../components/UpgradePrompt'
 
 export default function SupportPage() {
   const router = useRouter()
+  const [business, setBusiness] = useState(null)
   const [subscription, setSubscription] = useState(null)
   const [loading, setLoading] = useState(true)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -29,7 +30,7 @@ export default function SupportPage() {
 
       const { data: businessData } = await supabase
         .from('businesses')
-        .select('id')
+        .select('*')
         .eq('owner_id', user.id)
         .maybeSingle()
 
@@ -37,6 +38,8 @@ export default function SupportPage() {
         router.push('/dashboard/setup')
         return
       }
+
+      setBusiness(businessData)
 
       const response = await fetch(`/api/subscription/get?businessId=${businessData.id}`)
       const subData = await response.json()
@@ -81,7 +84,12 @@ export default function SupportPage() {
             <p>Get help with your store</p>
           </div>
           <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
-            <a href="/dashboard" className="nav-link">Go back</a>
+            <a href="/dashboard" className="nav-link">Dashboard</a>
+            <a href="/dashboard/products" className="nav-link">Products</a>
+            <a href="/dashboard/analytics" className="nav-link">Analytics</a>
+            <a href="/dashboard/customization" className="nav-link">Customization</a>
+            <a href="/dashboard/support" className="nav-link">Support</a>
+            {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
           </div>
           <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
         </div>

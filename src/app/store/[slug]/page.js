@@ -13,7 +13,9 @@ import {
   Store,
   Trash2,
   Plus,
-  Minus
+  Minus,
+  Share2,
+  Check
 } from 'lucide-react'
 
 export default function StorePage() {
@@ -32,6 +34,7 @@ export default function StorePage() {
   const [selectedProduct, setSelectedProduct] = useState(null)
   const [productModalOpen, setProductModalOpen] = useState(false)
   const [modalQuantity, setModalQuantity] = useState(1)
+  const [copiedProductId, setCopiedProductId] = useState(null)
 
   useEffect(() => {
     loadStoreData()
@@ -198,6 +201,16 @@ export default function StorePage() {
   const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0)
 
+  function shareProduct(product, e) {
+    if (e) e.stopPropagation()
+    if (!product.slug) return
+
+    const productUrl = `${window.location.origin}/store/${params.slug}/products/${product.slug}`
+    navigator.clipboard.writeText(productUrl)
+    setCopiedProductId(product.id)
+    setTimeout(() => setCopiedProductId(null), 2000)
+  }
+
   function checkoutWhatsApp() {
     if (!business || cart.length === 0) return
 
@@ -321,7 +334,13 @@ export default function StorePage() {
                 <div
                   key={product.id}
                   className="store-product-card"
-                  onClick={() => openProductModal(product)}
+                  onClick={() => {
+                    if (product.slug) {
+                      router.push(`/store/${params.slug}/products/${product.slug}`)
+                    } else {
+                      openProductModal(product)
+                    }
+                  }}
                   style={{ cursor: 'pointer' }}
                 >
                   {product.image_url ? (
@@ -339,16 +358,44 @@ export default function StorePage() {
                     <h3>{product.name}</h3>
                     <p className="store-product-price">₦{product.price.toLocaleString()}</p>
                   </div>
-                  <button
-                    className="add-to-cart-button"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      addToCart(product)
-                    }}
-                    style={{ backgroundColor: customization?.primaryColor || '#10b981' }}
-                  >
-                    <ShoppingBag size={16} /> Add to cart
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {product.slug && (
+                      <button
+                        onClick={(e) => shareProduct(product, e)}
+                        style={{
+                          flex: 1,
+                          padding: '10px',
+                          background: '#f3f4f6',
+                          color: '#374151',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        {copiedProductId === product.id ? <Check size={14} /> : <Share2 size={14} />}
+                        {copiedProductId === product.id ? 'Copied!' : 'Share'}
+                      </button>
+                    )}
+                    <button
+                      className="add-to-cart-button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        addToCart(product)
+                      }}
+                      style={{ 
+                        flex: product.slug ? 1 : 'auto',
+                        backgroundColor: customization?.primaryColor || '#10b981' 
+                      }}
+                    >
+                      <ShoppingBag size={16} /> Add to cart
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -364,7 +411,13 @@ export default function StorePage() {
                 <div
                   key={product.id}
                   className="store-product-card"
-                  onClick={() => openProductModal(product)}
+                  onClick={() => {
+                    if (product.slug) {
+                      router.push(`/store/${params.slug}/products/${product.slug}`)
+                    } else {
+                      openProductModal(product)
+                    }
+                  }}
                   style={{ cursor: 'pointer' }}
                 >
                   {product.image_url ? (
@@ -382,16 +435,44 @@ export default function StorePage() {
                     <h3>{product.name}</h3>
                     <p className="store-product-price">₦{product.price.toLocaleString()}</p>
                   </div>
-                  <button
-                    className="add-to-cart-button"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      addToCart(product)
-                    }}
-                    style={{ backgroundColor: customization?.primaryColor || '#10b981' }}
-                  >
-                    <ShoppingBag size={16} /> Add to cart
-                  </button>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {product.slug && (
+                      <button
+                        onClick={(e) => shareProduct(product, e)}
+                        style={{
+                          flex: 1,
+                          padding: '10px',
+                          background: '#f3f4f6',
+                          color: '#374151',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        {copiedProductId === product.id ? <Check size={14} /> : <Share2 size={14} />}
+                        {copiedProductId === product.id ? 'Copied!' : 'Share'}
+                      </button>
+                    )}
+                    <button
+                      className="add-to-cart-button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        addToCart(product)
+                      }}
+                      style={{ 
+                        flex: product.slug ? 1 : 'auto',
+                        backgroundColor: customization?.primaryColor || '#10b981' 
+                      }}
+                    >
+                      <ShoppingBag size={16} /> Add to cart
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -412,7 +493,13 @@ export default function StorePage() {
               <div
                 key={product.id}
                 className="store-product-card"
-                onClick={() => openProductModal(product)}
+                onClick={() => {
+                  if (product.slug) {
+                    router.push(`/store/${params.slug}/products/${product.slug}`)
+                  } else {
+                    openProductModal(product)
+                  }
+                }}
                 style={{ cursor: 'pointer' }}
               >
                 {product.image_url ? (
@@ -431,16 +518,44 @@ export default function StorePage() {
                   <p className="store-product-price">₦{product.price.toLocaleString()}</p>
                   {product.description && <p className="store-product-description">{product.description}</p>}
                 </div>
-                <button
-                  className="add-to-cart-button"
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    addToCart(product)
-                  }}
-                  style={{ backgroundColor: customization?.primaryColor || '#10b981' }}
-                >
-                  <ShoppingBag size={16} /> Add to cart
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {product.slug && (
+                    <button
+                      onClick={(e) => shareProduct(product, e)}
+                      style={{
+                        flex: 1,
+                        padding: '10px',
+                        background: '#f3f4f6',
+                        color: '#374151',
+                        border: 'none',
+                        borderRadius: '6px',
+                        cursor: 'pointer',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      {copiedProductId === product.id ? <Check size={14} /> : <Share2 size={14} />}
+                      {copiedProductId === product.id ? 'Copied!' : 'Share'}
+                    </button>
+                  )}
+                  <button
+                    className="add-to-cart-button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      addToCart(product)
+                    }}
+                    style={{ 
+                      flex: product.slug ? 1 : 'auto',
+                      backgroundColor: customization?.primaryColor || '#10b981' 
+                    }}
+                  >
+                    <ShoppingBag size={16} /> Add to cart
+                  </button>
+                </div>
               </div>
             ))}
           </div>

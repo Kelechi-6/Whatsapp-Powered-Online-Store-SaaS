@@ -140,7 +140,11 @@ export default function CustomizationPage() {
             <p>Customize your storefront appearance and layout</p>
           </div>
           <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
-            <a href="/dashboard" className="nav-link">Go back</a>
+            <a href="/dashboard" className="nav-link">Dashboard</a>
+            <a href="/dashboard/products" className="nav-link">Products</a>
+            <a href="/dashboard/analytics" className="nav-link">Analytics</a>
+            <a href="/dashboard/customization" className="nav-link">Customization</a>
+            <a href="/dashboard/support" className="nav-link">Support</a>
             {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
           </div>
           <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />

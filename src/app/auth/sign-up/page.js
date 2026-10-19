@@ -24,9 +24,17 @@ function SignUpContent() {
     event.preventDefault()
     setStatus({ error: '', loading: true, success: false })
     const supabase = createClient()
+
+    // Format phone number with +234 country code
+    let formattedPhone = form.phone.trim().replace(/\D/g, '') // Remove all non-digits
+    if (formattedPhone.startsWith('0')) {
+      formattedPhone = formattedPhone.substring(1) // Remove leading 0
+    }
+    formattedPhone = `+234${formattedPhone}` // Add country code
+
     const { data, error } = await supabase.auth.signUp({
       email: form.email.trim(), password: form.password,
-      options: { emailRedirectTo: getAuthRedirectUrl(), data: { business_name: form.businessName.trim(), owner_name: form.ownerName.trim(), phone: form.phone.trim(), category: form.category, selected_plan: selectedPlan } },
+      options: { emailRedirectTo: getAuthRedirectUrl(), data: { business_name: form.businessName.trim(), owner_name: form.ownerName.trim(), phone: formattedPhone, category: form.category, selected_plan: selectedPlan } },
     })
     if (error) return setStatus({ error: formatAuthError(error), loading: false, success: false })
     if (data.session) {

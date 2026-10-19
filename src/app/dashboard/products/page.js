@@ -20,6 +20,7 @@ export default function ProductsPage() {
     name: '',
     price: '',
     description: '',
+    category: '',
     imageUrl: ''
   })
   const [imageFile, setImageFile] = useState(null)
@@ -114,12 +115,27 @@ export default function ProductsPage() {
         imageUrl = publicUrlData.publicUrl
       }
 
+      // Generate unique slug for product
+      const baseSlug = form.name.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'product'
+      
+      // Check for existing slugs with the same base
+      const { data: existingSlugs } = await supabase
+        .from('products')
+        .select('slug')
+        .eq('business_id', business.id)
+        .like('slug', `${baseSlug}%`)
+      
+      const suffix = existingSlugs?.length ? `-${existingSlugs.length + 1}` : ''
+      const productSlug = `${baseSlug}${suffix}`
+
       const productData = {
         business_id: business.id,
         name: form.name,
         price: parseFloat(form.price),
         description: form.description,
-        image_url: imageUrl
+        category: form.category,
+        image_url: imageUrl,
+        slug: editingProduct?.slug || productSlug
       }
 
       let error
@@ -180,6 +196,7 @@ export default function ProductsPage() {
       name: product.name,
       price: product.price,
       description: product.description || '',
+      category: product.category || '',
       imageUrl: product.image_url || ''
     })
     setShowForm(true)
@@ -188,7 +205,7 @@ export default function ProductsPage() {
   function closeForm() {
     setShowForm(false)
     setEditingProduct(null)
-    setForm({ name: '', price: '', description: '', imageUrl: '' })
+    setForm({ name: '', price: '', description: '', category: '', imageUrl: '' })
     setImageFile(null)
   }
 
@@ -228,7 +245,11 @@ export default function ProductsPage() {
             <p>Manage your product catalog</p>
           </div>
           <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
-            <a href="/dashboard" className="nav-link">Go back</a>
+            <a href="/dashboard" className="nav-link">Dashboard</a>
+            <a href="/dashboard/products" className="nav-link">Products</a>
+            <a href="/dashboard/analytics" className="nav-link">Analytics</a>
+            <a href="/dashboard/customization" className="nav-link">Customization</a>
+            <a href="/dashboard/support" className="nav-link">Support</a>
             {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
           </div>
           <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
@@ -361,6 +382,25 @@ export default function ProductsPage() {
                     step="0.01"
                     required
                   />
+                </label>
+
+                <label>Category
+                  <select
+                    name="category"
+                    value={form.category}
+                    onChange={update}
+                    required
+                  >
+                    <option value="">Select a category</option>
+                    <option value="Fashion">Fashion</option>
+                    <option value="Shoes">Shoes</option>
+                    <option value="Beauty & cosmetics">Beauty & cosmetics</option>
+                    <option value="Food">Food</option>
+                    <option value="Accessories">Accessories</option>
+                    <option value="Electronics">Electronics</option>
+                    <option value="Home & Living">Home & Living</option>
+                    <option value="Other">Other</option>
+                  </select>
                 </label>
 
                 <label>Product Image
