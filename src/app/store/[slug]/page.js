@@ -18,6 +18,7 @@ import {
   Check
 } from 'lucide-react'
 import { FadeIn, StaggeredFadeIn } from '../../../components/ScrollAnimation'
+import LoadingIcon from '../../../components/LoadingIcon'
 
 export default function StorePage() {
   const params = useParams()
@@ -245,11 +246,7 @@ export default function StorePage() {
   }
 
   if (loading) {
-    return (
-      <main className="store-shell">
-        <div className="store-loading">Loading store...</div>
-      </main>
-    )
+    return <LoadingIcon />
   }
 
   if (!business) {

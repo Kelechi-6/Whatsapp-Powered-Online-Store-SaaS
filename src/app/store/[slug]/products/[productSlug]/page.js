@@ -14,6 +14,7 @@ import {
   Check
 } from 'lucide-react'
 import { FadeIn, ScaleIn } from '../../../../../components/ScrollAnimation'
+import LoadingIcon from '../../../../../components/LoadingIcon'
 
 export default function ProductDetailPage() {
   const params = useParams()
@@ -127,11 +128,7 @@ export default function ProductDetailPage() {
   }
 
   if (loading) {
-    return (
-      <main className="store-shell">
-        <div className="store-loading">Loading...</div>
-      </main>
-    )
+    return <LoadingIcon />
   }
 
   if (!product || !business) {
