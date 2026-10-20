@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Susrense } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient, formatAuthError, getAuthRedirectUrl } from '../../lib/supabase/client'
