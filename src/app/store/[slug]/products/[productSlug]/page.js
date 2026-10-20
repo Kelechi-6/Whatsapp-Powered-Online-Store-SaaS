@@ -13,6 +13,7 @@ import {
   Share2,
   Check
 } from 'lucide-react'
+import { FadeIn, ScaleIn } from '../../../../../components/ScrollAnimation'
 
 export default function ProductDetailPage() {
   const params = useParams()
@@ -165,235 +166,245 @@ export default function ProductDetailPage() {
     <main className="store-shell" style={{
       '--primary-color': customization?.primaryColor || '#10b981'
     }}>
-      {/* Navigation */}
-      <nav className="store-nav">
-        <button
-          onClick={() => router.push(`/store/${params.slug}`)}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'none',
-            border: 'none',
-            color: '#374151',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '500'
-          }}
-        >
-          <ArrowLeft size={18} />
-          Back to {business.name}
-        </button>
-        <button
-          onClick={shareProduct}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '10px 16px',
-            background: '#f3f4f6',
-            color: '#374151',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: '600'
-          }}
-        >
-          {copied ? <Check size={16} /> : <Share2 size={16} />}
-          {copied ? 'Copied!' : 'Share'}
-        </button>
-      </nav>
+      <FadeIn>
+        {/* Navigation */}
+        <nav className="store-nav">
+          <button
+            onClick={() => router.push(`/store/${params.slug}`)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              background: 'none',
+              border: 'none',
+              color: '#374151',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            <ArrowLeft size={18} />
+            Back to {business.name}
+          </button>
+          <button
+            onClick={shareProduct}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 16px',
+              background: '#f3f4f6',
+              color: '#374151',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '600'
+            }}
+          >
+            {copied ? <Check size={16} /> : <Share2 size={16} />}
+            {copied ? 'Copied!' : 'Share'}
+          </button>
+        </nav>
+      </FadeIn>
 
       {/* Product Details */}
-      <section style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'start' }}>
-          {/* Product Image */}
-          <div>
-            {product.image_url ? (
-              <div
-                style={{
-                  width: '100%',
-                  aspectRatio: '1',
-                  borderRadius: '12px',
-                  overflow: 'hidden',
-                  background: '#f9fafb',
-                  border: '1px solid #e5e7eb'
-                }}
-              >
-                <img
-                  src={product.image_url}
-                  alt={product.name}
+      <FadeIn delay={100}>
+        <section style={{ padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'start' }}>
+            {/* Product Image */}
+            <ScaleIn>
+              <div>
+                {product.image_url ? (
+                  <div
+                    style={{
+                      width: '100%',
+                      aspectRatio: '1',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      background: '#f9fafb',
+                      border: '1px solid #e5e7eb'
+                    }}
+                  >
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    />
+                  </div>
+                ) : (
+                  <div
+                    style={{
+                      width: '100%',
+                      aspectRatio: '1',
+                      borderRadius: '12px',
+                      background: '#f9fafb',
+                      border: '1px solid #e5e7eb',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <ShoppingBag size={64} style={{ color: '#d1d5db' }} />
+                  </div>
+                )}
+              </div>
+            </ScaleIn>
+
+            {/* Product Info */}
+            <FadeIn delay={150}>
+              <div>
+                <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '12px', lineHeight: '1.2' }}>
+                  {product.name}
+                </h1>
+                <p style={{ fontSize: '28px', fontWeight: '700', color: customization?.primaryColor || '#10b981', marginBottom: '16px' }}>
+                  ₦{product.price.toLocaleString()}
+                </p>
+                {product.description && (
+                  <p style={{ color: '#6b7280', lineHeight: '1.6', marginBottom: '24px' }}>
+                    {product.description}
+                  </p>
+                )}
+
+                {/* Quantity Selector */}
+                <div style={{ marginBottom: '24px' }}>
+                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '600' }}>
+                    Quantity
+                  </label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button
+                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '6px',
+                        background: 'white',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Minus size={18} />
+                    </button>
+                    <span style={{
+                      width: '60px',
+                      textAlign: 'center',
+                      fontSize: '18px',
+                      fontWeight: '600'
+                    }}>
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity(quantity + 1)}
+                      style={{
+                        width: '40px',
+                        height: '40px',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '6px',
+                        background: 'white',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Plus size={18} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Order on WhatsApp Button */}
+                <button
+                  onClick={checkoutWhatsApp}
                   style={{
                     width: '100%',
-                    height: '100%',
-                    objectFit: 'cover'
+                    padding: '16px',
+                    background: customization?.primaryColor || '#10b981',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    marginBottom: '16px'
                   }}
-                />
-              </div>
-            ) : (
-              <div
-                style={{
-                  width: '100%',
-                  aspectRatio: '1',
-                  borderRadius: '12px',
+                >
+                  <MessageCircle size={20} />
+                  Order on WhatsApp - ₦{(product.price * quantity).toLocaleString()}
+                </button>
+
+                {/* Visit Store Link */}
+                <button
+                  onClick={() => router.push(`/store/${params.slug}`)}
+                  style={{
+                    width: '100%',
+                    padding: '16px',
+                    background: 'white',
+                    color: '#374151',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    marginBottom: '24px'
+                  }}
+                >
+                  <Store size={20} />
+                  Visit Store
+                </button>
+
+                {/* Store Info */}
+                <div style={{
+                  padding: '16px',
                   background: '#f9fafb',
-                  border: '1px solid #e5e7eb',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <ShoppingBag size={64} style={{ color: '#d1d5db' }} />
-              </div>
-            )}
-          </div>
-
-          {/* Product Info */}
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: '700', marginBottom: '12px', lineHeight: '1.2' }}>
-              {product.name}
-            </h1>
-            <p style={{ fontSize: '28px', fontWeight: '700', color: customization?.primaryColor || '#10b981', marginBottom: '16px' }}>
-              ₦{product.price.toLocaleString()}
-            </p>
-            {product.description && (
-              <p style={{ color: '#6b7280', lineHeight: '1.6', marginBottom: '24px' }}>
-                {product.description}
-              </p>
-            )}
-
-            {/* Quantity Selector */}
-            <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '600' }}>
-                Quantity
-              </label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '6px',
-                    background: 'white',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Minus size={18} />
-                </button>
-                <span style={{
-                  width: '60px',
-                  textAlign: 'center',
-                  fontSize: '18px',
-                  fontWeight: '600'
+                  borderRadius: '8px',
+                  border: '1px solid #e5e7eb'
                 }}>
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '6px',
-                    background: 'white',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
-                  <Plus size={18} />
-                </button>
+                  <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                    Sold by <strong style={{ color: '#374151' }}>{business.name}</strong>
+                  </p>
+                  {business.location && (
+                    <p style={{ fontSize: '14px', color: '#6b7280' }}>
+                      📍 {business.location}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-
-            {/* Order on WhatsApp Button */}
-            <button
-              onClick={checkoutWhatsApp}
-              style={{
-                width: '100%',
-                padding: '16px',
-                background: customization?.primaryColor || '#10b981',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                marginBottom: '16px'
-              }}
-            >
-              <MessageCircle size={20} />
-              Order on WhatsApp - ₦{(product.price * quantity).toLocaleString()}
-            </button>
-
-            {/* Visit Store Link */}
-            <button
-              onClick={() => router.push(`/store/${params.slug}`)}
-              style={{
-                width: '100%',
-                padding: '16px',
-                background: 'white',
-                color: '#374151',
-                border: '1px solid #e5e7eb',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontSize: '16px',
-                fontWeight: '600',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                marginBottom: '24px'
-              }}
-            >
-              <Store size={20} />
-              Visit Store
-            </button>
-
-            {/* Store Info */}
-            <div style={{
-              padding: '16px',
-              background: '#f9fafb',
-              borderRadius: '8px',
-              border: '1px solid #e5e7eb'
-            }}>
-              <p style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
-                Sold by <strong style={{ color: '#374151' }}>{business.name}</strong>
-              </p>
-              {business.location && (
-                <p style={{ fontSize: '14px', color: '#6b7280' }}>
-                  📍 {business.location}
-                </p>
-              )}
-            </div>
+            </FadeIn>
           </div>
-        </div>
-      </section>
+        </section>
+      </FadeIn>
 
       {/* Platform branding */}
       {!customization?.removeBranding && (
-        <footer style={{
-          textAlign: 'center',
-          padding: '20px',
-          borderTop: '1px solid #e5e7eb',
-          marginTop: '40px',
-          fontSize: '13px',
-          color: '#6b7280'
-        }}>
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-            Powered by <strong style={{ color: '#10b981' }}>Shopmini</strong>
-          </span>
-        </footer>
+        <FadeIn delay={200}>
+          <footer style={{
+            textAlign: 'center',
+            padding: '20px',
+            borderTop: '1px solid #e5e7eb',
+            marginTop: '40px',
+            fontSize: '13px',
+            color: '#6b7280'
+          }}>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+              Powered by <strong style={{ color: '#10b981' }}>Shopmini</strong>
+            </span>
+          </footer>
+        </FadeIn>
       )}
     </main>
   )

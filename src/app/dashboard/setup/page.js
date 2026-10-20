@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import { Store, ArrowRight, Check, X } from 'lucide-react'
+import { FadeIn, ScaleIn } from '../../../components/ScrollAnimation'
 
 function SetupContent() {
   const router = useRouter()
@@ -147,34 +148,42 @@ function SetupContent() {
 
   return (
     <main className="auth-shell">
-      <section className="auth-card">
-        <a href="/dashboard" className="brand">
-          <span className="brand-mark"><Store size={18} /></span>Shopmini
-        </a>
-        
-        <div className="auth-heading">
-          <span className="kicker">FINISH YOUR STORE</span>
-          <h1>Set up your storefront.</h1>
-          <p>Add your WhatsApp number and store details to start selling.</p>
-        </div>
+      <ScaleIn>
+        <section className="auth-card">
+          <FadeIn>
+            <a href="/dashboard" className="brand">
+              <span className="brand-mark"><Store size={18} /></span>Shopmini
+            </a>
+          </FadeIn>
+          
+          <FadeIn delay={100}>
+            <div className="auth-heading">
+              <span className="kicker">FINISH YOUR STORE</span>
+              <h1>Set up your storefront.</h1>
+              <p>Add your WhatsApp number and store details to start selling.</p>
+            </div>
+          </FadeIn>
 
-        {status.success ? (
-          <div className="auth-success">
-            <div className="success-icon"><Check size={32} /></div>
-            <h2>Store created!</h2>
-            <p>Your storefront is now live. Redirecting to dashboard...</p>
-          </div>
-        ) : (
-          <form onSubmit={submit} className="auth-form">
-            <label>Store name
-              <input 
-                name="storeName" 
-                value={form.storeName} 
-                onChange={update} 
-                placeholder="e.g. Kelly's Fashion" 
-                required 
-              />
-            </label>
+          {status.success ? (
+            <FadeIn>
+              <div className="auth-success">
+                <div className="success-icon"><Check size={32} /></div>
+                <h2>Store created!</h2>
+                <p>Your storefront is now live. Redirecting to dashboard...</p>
+              </div>
+            </FadeIn>
+          ) : (
+            <FadeIn delay={200}>
+              <form onSubmit={submit} className="auth-form">
+                <label>Store name
+                  <input 
+                    name="storeName" 
+                    value={form.storeName} 
+                    onChange={update} 
+                    placeholder="e.g. Kelly's Fashion" 
+                    required 
+                  />
+                </label>
 
             <label>WhatsApp number
               <input 
@@ -225,9 +234,11 @@ function SetupContent() {
             <p className="auth-foot">
               <a href="/dashboard">Cancel and go back</a>
             </p>
-          </form>
-        )}
-      </section>
+            </form>
+            </FadeIn>
+          )}
+        </section>
+      </ScaleIn>
     </main>
   )
 }

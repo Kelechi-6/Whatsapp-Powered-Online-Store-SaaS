@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '../lib/supabase/client'
 import { Copy, Check, ArrowRight, Menu, X } from 'lucide-react'
+import { FadeIn, StaggeredFadeIn } from '../../components/ScrollAnimation'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -151,136 +152,146 @@ export default function DashboardPage() {
         </div>
       </header>
       <section className="dashboard-content">
-        <div className="dashboard-header">
-          <div>
-            <h1>Dashboard</h1>
-            <p>Welcome back, {user?.user_metadata?.owner_name || 'there'}</p>
+        <FadeIn>
+          <div className="dashboard-header">
+            <div>
+              <h1>Dashboard</h1>
+              <p>Welcome back, {user?.user_metadata?.owner_name || 'there'}</p>
+            </div>
+            <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+              <a href="/dashboard" className="nav-link">Dashboard</a>
+              <a href="/dashboard/products" className="nav-link">Products</a>
+              <a href="/dashboard/analytics" className="nav-link">Analytics</a>
+              <a href="/dashboard/customization" className="nav-link">Customization</a>
+              <a href="/dashboard/support" className="nav-link">Support</a>
+              {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
+            </div>
+            <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
           </div>
-          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
-            <a href="/dashboard" className="nav-link">Dashboard</a>
-            <a href="/dashboard/products" className="nav-link">Products</a>
-            <a href="/dashboard/analytics" className="nav-link">Analytics</a>
-            <a href="/dashboard/customization" className="nav-link">Customization</a>
-            <a href="/dashboard/support" className="nav-link">Support</a>
-            {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
-          </div>
-          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
-        </div>
+        </FadeIn>
 
-        <div className="dashboard-welcome">
-          <div>
-            <span className="kicker">YOUR STORE DASHBOARD</span>
-            <h1>{getTimeGreeting()}, {user?.user_metadata?.owner_name || 'there'}.</h1>
-            <p>{business ? 'Here\'s how your store is doing.' : 'Your account is ready. Complete your store setup to start selling.'}</p>
-            {subscription && (
-              <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{
-                    display: 'inline-block',
-                    background: subscription.plan === 'free' ? '#e5e7eb' : 'var(--mint)',
-                    color: subscription.plan === 'free' ? '#374151' : '#2d6d5e',
-                    padding: '6px 12px',
-                    borderRadius: '20px',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.05em'
-                  }}>
-                    {subscription.plan} Plan
+        <FadeIn delay={100}>
+          <div className="dashboard-welcome">
+            <div>
+              <span className="kicker">YOUR STORE DASHBOARD</span>
+              <h1>{getTimeGreeting()}, {user?.user_metadata?.owner_name || 'there'}.</h1>
+              <p>{business ? 'Here\'s how your store is doing.' : 'Your account is ready. Complete your store setup to start selling.'}</p>
+              {subscription && (
+                <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{
+                      display: 'inline-block',
+                      background: subscription.plan === 'free' ? '#e5e7eb' : 'var(--mint)',
+                      color: subscription.plan === 'free' ? '#374151' : '#2d6d5e',
+                      padding: '6px 12px',
+                      borderRadius: '20px',
+                      fontSize: '11px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.05em'
+                    }}>
+                      {subscription.plan} Plan
+                    </div>
+                    <button
+                      onClick={() => router.push('/dashboard/subscription?upgrade=true')}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'var(--green)',
+                        fontSize: '12px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        textDecoration: 'underline'
+                      }}
+                    >
+                      {subscription.plan === 'free' ? 'Upgrade' : 'Upgrade'}
+                    </button>
                   </div>
-                  <button
-                    onClick={() => router.push('/dashboard/subscription?upgrade=true')}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      color: 'var(--green)',
+                  {subscription.plan !== 'free' && subscription.start_date && subscription.end_date && (
+                    <div style={{
                       fontSize: '12px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      textDecoration: 'underline'
-                    }}
-                  >
-                    {subscription.plan === 'free' ? 'Upgrade' : 'Upgrade'}
-                  </button>
+                      color: '#6b7280',
+                      background: '#f9fafb',
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      border: '1px solid #e5e7eb'
+                    }}>
+                      <div style={{ marginBottom: '4px' }}>
+                        <strong>Started:</strong> {new Date(subscription.start_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                      </div>
+                      <div>
+                        <strong>Expires:</strong> {new Date(subscription.end_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                      </div>
+                    </div>
+                  )}
                 </div>
-                {subscription.plan !== 'free' && subscription.start_date && subscription.end_date && (
-                  <div style={{
-                    fontSize: '12px',
-                    color: '#6b7280',
-                    background: '#f9fafb',
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    border: '1px solid #e5e7eb'
-                  }}>
-                    <div style={{ marginBottom: '4px' }}>
-                      <strong>Started:</strong> {new Date(subscription.start_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                    </div>
-                    <div>
-                      <strong>Expires:</strong> {new Date(subscription.end_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                    </div>
-                  </div>
-                )}
+              )}
+            </div>
+            {business && (
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <a className="button button-dark" href={`/store/${business.slug}`}>View store</a>
+                <button
+                  className="button button-outline"
+                  onClick={copyStoreLink}
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                >
+                  {copied ? <Check size={16} /> : <Copy size={16} />}
+                  {copied ? 'Copied!' : 'Copy link'}
+                </button>
               </div>
             )}
           </div>
-          {business && (
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <a className="button button-dark" href={`/store/${business.slug}`}>View store</a>
-              <button
-                className="button button-outline"
-                onClick={copyStoreLink}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
-              >
-                {copied ? <Check size={16} /> : <Copy size={16} />}
-                {copied ? 'Copied!' : 'Copy link'}
-              </button>
-            </div>
-          )}
-        </div>
+        </FadeIn>
 
         {business ? (
           <>
-            <div className="dashboard-stats">
-              <div>
-                <small>STORE VIEWS TODAY</small>
-                <strong>{views}</strong>
-                <span>Start sharing your link</span>
+            <StaggeredFadeIn staggerDelay={100}>
+              <div className="dashboard-stats">
+                <div>
+                  <small>STORE VIEWS TODAY</small>
+                  <strong>{views}</strong>
+                  <span>Start sharing your link</span>
+                </div>
+                <a href="/dashboard/products" className="stat-clickable">
+                  <small>PRODUCTS</small>
+                  <strong>{products}</strong>
+                  <span>Manage your catalog</span>
+                </a>
+                <div>
+                  <small>ORDERS STARTED</small>
+                  <strong>{orders}</strong>
+                  <span>Through your storefront</span>
+                </div>
+                <div>
+                  <small>WHATSAPP ORDERS</small>
+                  <strong>0</strong>
+                  <span>Ready to follow up</span>
+                </div>
               </div>
-              <a href="/dashboard/products" className="stat-clickable">
-                <small>PRODUCTS</small>
-                <strong>{products}</strong>
-                <span>Manage your catalog</span>
-              </a>
-              <div>
-                <small>ORDERS STARTED</small>
-                <strong>{orders}</strong>
-                <span>Through your storefront</span>
-              </div>
-              <div>
-                <small>WHATSAPP ORDERS</small>
-                <strong>0</strong>
-                <span>Ready to follow up</span>
-              </div>
-            </div>
+            </StaggeredFadeIn>
 
-            <div className="dashboard-panel">
-              <div>
-                <span className="kicker">NEXT STEP</span>
-                <h2>Add your products</h2>
-                <p>Upload products, set your prices, and share your store link with customers.</p>
+            <FadeIn delay={300}>
+              <div className="dashboard-panel">
+                <div>
+                  <span className="kicker">NEXT STEP</span>
+                  <h2>Add your products</h2>
+                  <p>Upload products, set your prices, and share your store link with customers.</p>
+                </div>
+                <a className="button button-outline" href="/dashboard/products">Add product</a>
               </div>
-              <a className="button button-outline" href="/dashboard/products">Add product</a>
-            </div>
+            </FadeIn>
           </>
         ) : (
-          <div className="dashboard-panel">
-            <div>
-              <span className="kicker">SETUP REQUIRED</span>
-              <h2>Let's finish your store</h2>
-              <p>Your account is created. Add your WhatsApp number and store details to publish your storefront.</p>
+          <FadeIn delay={200}>
+            <div className="dashboard-panel">
+              <div>
+                <span className="kicker">SETUP REQUIRED</span>
+                <h2>Let's finish your store</h2>
+                <p>Your account is created. Add your WhatsApp number and store details to publish your storefront.</p>
+              </div>
+              <a className="button button-dark" href="/dashboard/setup">Start setup</a>
             </div>
-            <a className="button button-dark" href="/dashboard/setup">Start setup</a>
-          </div>
+          </FadeIn>
         )}
       </section>
     </main>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import { BarChart3, Eye, ShoppingBag, MessageCircle, TrendingUp, Calendar, Lock, ArrowRight, Menu, X } from 'lucide-react'
 import { UpgradePrompt } from '../../../components/UpgradePrompt'
+import { FadeIn, StaggeredFadeIn } from '../../../components/ScrollAnimation'
 
 export default function AnalyticsPage() {
   const router = useRouter()
@@ -138,159 +139,173 @@ export default function AnalyticsPage() {
         </div>
       </header>
       <section className="dashboard-content">
-        <div className="dashboard-header">
-          <div>
-            <h1>Analytics</h1>
-            <p>Track your store performance</p>
+        <FadeIn>
+          <div className="dashboard-header">
+            <div>
+              <h1>Analytics</h1>
+              <p>Track your store performance</p>
+            </div>
+            <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+              <a href="/dashboard" className="nav-link">Dashboard</a>
+              <a href="/dashboard/products" className="nav-link">Products</a>
+              <a href="/dashboard/analytics" className="nav-link">Analytics</a>
+              <a href="/dashboard/customization" className="nav-link">Customization</a>
+              <a href="/dashboard/support" className="nav-link">Support</a>
+              {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
+            </div>
+            <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
           </div>
-          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
-            <a href="/dashboard" className="nav-link">Dashboard</a>
-            <a href="/dashboard/products" className="nav-link">Products</a>
-            <a href="/dashboard/analytics" className="nav-link">Analytics</a>
-            <a href="/dashboard/customization" className="nav-link">Customization</a>
-            <a href="/dashboard/support" className="nav-link">Support</a>
-            {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
-          </div>
-          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
-        </div>
+        </FadeIn>
 
-        {!hasAnalytics && (
-          <UpgradePrompt
-            featureName="Advanced Analytics"
-            currentPlan={subscription?.plan || 'free'}
-            requiredPlan="starter"
-            message="Get detailed insights into your store views, product performance, and customer engagement."
-          />
-        )}
+        <FadeIn delay={100}>
+          {!hasAnalytics && (
+            <UpgradePrompt
+              featureName="Advanced Analytics"
+              currentPlan={subscription?.plan || 'free'}
+              requiredPlan="starter"
+              message="Get detailed insights into your store views, product performance, and customer engagement."
+            />
+          )}
+        </FadeIn>
 
         {hasAnalytics && (
           <>
-            <div style={{ marginBottom: '20px', display: 'flex', gap: '8px' }}>
-              {['7d', '30d', '90d'].map(range => (
-                <button
-                  key={range}
-                  onClick={() => setTimeRange(range)}
-                  style={{
-                    padding: '8px 16px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '6px',
-                    background: timeRange === range ? '#10b981' : 'white',
-                    color: timeRange === range ? 'white' : '#374151',
-                    cursor: 'pointer',
-                    fontSize: '14px'
-                  }}
-                >
-                  {range === '7d' ? 'Last 7 days' : range === '30d' ? 'Last 30 days' : 'Last 90 days'}
-                </button>
-              ))}
-            </div>
+            <FadeIn delay={150}>
+              <div style={{ marginBottom: '20px', display: 'flex', gap: '8px' }}>
+                {['7d', '30d', '90d'].map(range => (
+                  <button
+                    key={range}
+                    onClick={() => setTimeRange(range)}
+                    style={{
+                      padding: '8px 16px',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '6px',
+                      background: timeRange === range ? '#10b981' : 'white',
+                      color: timeRange === range ? 'white' : '#374151',
+                      cursor: 'pointer',
+                      fontSize: '14px'
+                    }}
+                  >
+                    {range === '7d' ? 'Last 7 days' : range === '30d' ? 'Last 30 days' : 'Last 90 days'}
+                  </button>
+                ))}
+              </div>
+            </FadeIn>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
-              <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <Eye size={20} style={{ color: '#10b981' }} />
-                  <span style={{ fontSize: '14px', color: '#6b7280' }}>Store Views</span>
-                </div>
-                <strong style={{ fontSize: '28px', color: '#111827' }}>{metrics.totalViews}</strong>
-                {hasReports && (
-                  <div style={{ fontSize: '12px', color: parseFloat(growth) >= 0 ? '#10b981' : '#ef4444', marginTop: '4px' }}>
-                    {parseFloat(growth) >= 0 ? '+' : ''}{growth}% vs yesterday
+            <StaggeredFadeIn staggerDelay={100}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
+                <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <Eye size={20} style={{ color: '#10b981' }} />
+                    <span style={{ fontSize: '14px', color: '#6b7280' }}>Store Views</span>
                   </div>
-                )}
-              </div>
-
-              <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <ShoppingBag size={20} style={{ color: '#10b981' }} />
-                  <span style={{ fontSize: '14px', color: '#6b7280' }}>Product Views</span>
+                  <strong style={{ fontSize: '28px', color: '#111827' }}>{metrics.totalViews}</strong>
+                  {hasReports && (
+                    <div style={{ fontSize: '12px', color: parseFloat(growth) >= 0 ? '#10b981' : '#ef4444', marginTop: '4px' }}>
+                      {parseFloat(growth) >= 0 ? '+' : ''}{growth}% vs yesterday
+                    </div>
+                  )}
                 </div>
-                <strong style={{ fontSize: '28px', color: '#111827' }}>{metrics.productViews}</strong>
-              </div>
 
-              <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <TrendingUp size={20} style={{ color: '#10b981' }} />
-                  <span style={{ fontSize: '14px', color: '#6b7280' }}>Orders</span>
+                <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <ShoppingBag size={20} style={{ color: '#10b981' }} />
+                    <span style={{ fontSize: '14px', color: '#6b7280' }}>Product Views</span>
+                  </div>
+                  <strong style={{ fontSize: '28px', color: '#111827' }}>{metrics.productViews}</strong>
                 </div>
-                <strong style={{ fontSize: '28px', color: '#111827' }}>{metrics.orders}</strong>
+
+                <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <TrendingUp size={20} style={{ color: '#10b981' }} />
+                    <span style={{ fontSize: '14px', color: '#6b7280' }}>Orders</span>
+                  </div>
+                  <strong style={{ fontSize: '28px', color: '#111827' }}>{metrics.orders}</strong>
+                </div>
               </div>
-            </div>
+            </StaggeredFadeIn>
 
             {/* Pro-only features: Graph and detailed stats */}
             {hasReports && sortedDailyViews.length > 0 && (
-              <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb', marginBottom: '24px' }}>
-                <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <BarChart3 size={20} style={{ color: '#10b981' }} />
-                  Store Views Over Time
-                </h3>
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', height: '150px', padding: '20px 0' }}>
-                  {sortedDailyViews.map(([date, count]) => {
-                    const maxCount = Math.max(...sortedDailyViews.map(([, c]) => c))
-                    const height = maxCount > 0 ? (count / maxCount) * 100 : 0
-                    return (
-                      <div key={date} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-                        <div style={{
-                          width: '100%',
-                          height: `${height}%`,
-                          background: '#10b981',
-                          borderRadius: '4px 4px 0 0',
-                          minHeight: '4px',
-                          transition: 'height 0.3s'
-                        }} />
-                        <span style={{ fontSize: '11px', color: '#6b7280' }}>
-                          {new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
-                        </span>
-                      </div>
-                    )
-                  })}
+              <FadeIn delay={250}>
+                <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb', marginBottom: '24px' }}>
+                  <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <BarChart3 size={20} style={{ color: '#10b981' }} />
+                    Store Views Over Time
+                  </h3>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px', height: '150px', padding: '20px 0' }}>
+                    {sortedDailyViews.map(([date, count]) => {
+                      const maxCount = Math.max(...sortedDailyViews.map(([, c]) => c))
+                      const height = maxCount > 0 ? (count / maxCount) * 100 : 0
+                      return (
+                        <div key={date} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                          <div style={{
+                            width: '100%',
+                            height: `${height}%`,
+                            background: '#10b981',
+                            borderRadius: '4px 4px 0 0',
+                            minHeight: '4px',
+                            transition: 'height 0.3s'
+                          }} />
+                          <span style={{ fontSize: '11px', color: '#6b7280' }}>
+                            {new Date(date).toLocaleDateString('en-US', { weekday: 'short' })}
+                          </span>
+                        </div>
+                      )
+                    })}
+                  </div>
                 </div>
-              </div>
+              </FadeIn>
             )}
 
             {hasReports && (
-              <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb', marginBottom: '24px' }}>
-                <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Calendar size={20} style={{ color: '#10b981' }} />
-                  Detailed Statistics
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' }}>
-                  <div>
-                    <span style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>Views Today</span>
-                    <strong style={{ fontSize: '18px', color: '#111827' }}>{todayViews}</strong>
-                  </div>
-                  <div>
-                    <span style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>Views This Week</span>
-                    <strong style={{ fontSize: '18px', color: '#111827' }}>{sortedDailyViews.reduce((sum, [, count]) => sum + count, 0)}</strong>
-                  </div>
-                  <div>
-                    <span style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>Views This Month</span>
-                    <strong style={{ fontSize: '18px', color: '#111827' }}>{metrics.totalViews}</strong>
-                  </div>
-                  <div>
-                    <span style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>Growth</span>
-                    <strong style={{ fontSize: '18px', color: parseFloat(growth) >= 0 ? '#10b981' : '#ef4444' }}>
-                      {parseFloat(growth) >= 0 ? '+' : ''}{growth}%
-                    </strong>
+              <FadeIn delay={300}>
+                <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb', marginBottom: '24px' }}>
+                  <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Calendar size={20} style={{ color: '#10b981' }} />
+                    Detailed Statistics
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' }}>
+                    <div>
+                      <span style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>Views Today</span>
+                      <strong style={{ fontSize: '18px', color: '#111827' }}>{todayViews}</strong>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>Views This Week</span>
+                      <strong style={{ fontSize: '18px', color: '#111827' }}>{sortedDailyViews.reduce((sum, [, count]) => sum + count, 0)}</strong>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>Views This Month</span>
+                      <strong style={{ fontSize: '18px', color: '#111827' }}>{metrics.totalViews}</strong>
+                    </div>
+                    <div>
+                      <span style={{ fontSize: '12px', color: '#6b7280', display: 'block', marginBottom: '4px' }}>Growth</span>
+                      <strong style={{ fontSize: '18px', color: parseFloat(growth) >= 0 ? '#10b981' : '#ef4444' }}>
+                        {parseFloat(growth) >= 0 ? '+' : ''}{growth}%
+                      </strong>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </FadeIn>
             )}
 
             {mostViewedProducts.length > 0 && (
-              <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <TrendingUp size={20} style={{ color: '#10b981' }} />
-                  Most Viewed Products
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {mostViewedProducts.map(([productId, count]) => (
-                    <div key={productId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: '#f9fafb', borderRadius: '6px' }}>
-                      <span style={{ color: '#374151' }}>Product ID: {productId.slice(0, 8)}...</span>
-                      <strong style={{ color: '#10b981' }}>{count} views</strong>
-                    </div>
-                  ))}
+              <FadeIn delay={350}>
+                <div style={{ background: 'white', padding: '20px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                  <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <TrendingUp size={20} style={{ color: '#10b981' }} />
+                    Most Viewed Products
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {mostViewedProducts.map(([productId, count]) => (
+                      <div key={productId} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: '#f9fafb', borderRadius: '6px' }}>
+                        <span style={{ color: '#374151' }}>Product ID: {productId.slice(0, 8)}...</span>
+                        <strong style={{ color: '#10b981' }}>{count} views</strong>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              </FadeIn>
             )}
           </>
         )}

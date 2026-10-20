@@ -17,6 +17,7 @@ import {
   Share2,
   Check
 } from 'lucide-react'
+import { FadeIn, StaggeredFadeIn } from '../../../components/ScrollAnimation'
 
 export default function StorePage() {
   const params = useParams()
@@ -267,70 +268,79 @@ export default function StorePage() {
     <main className="store-shell" style={{
       '--primary-color': customization?.primaryColor || '#10b981'
     }}>
-      <nav className="store-nav">
-        <div className="store-brand">
-          <div className="store-avatar" style={{ backgroundColor: customization?.primaryColor || '#10b981' }}>
-            {business.name.charAt(0).toUpperCase()}
+      <FadeIn>
+        <nav className="store-nav">
+          <div className="store-brand">
+            <div className="store-avatar" style={{ backgroundColor: customization?.primaryColor || '#10b981' }}>
+              {business.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <strong>{business.name}</strong>
+              <small>{business.location || 'Online Store'}</small>
+            </div>
           </div>
-          <div>
-            <strong>{business.name}</strong>
-            <small>{business.location || 'Online Store'}</small>
-          </div>
-        </div>
-        <button
-          className="cart-button"
-          onClick={() => setCartOpen(true)}
-          style={{ backgroundColor: customization?.primaryColor || '#10b981' }}
-        >
-          <ShoppingBag size={20} />
-          {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-        </button>
-      </nav>
+          <button
+            className="cart-button"
+            onClick={() => setCartOpen(true)}
+            style={{ backgroundColor: customization?.primaryColor || '#10b981' }}
+          >
+            <ShoppingBag size={20} />
+            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+          </button>
+        </nav>
+      </FadeIn>
 
-      <section className="store-hero">
-        <div className="hero-content">
-          <span className="hero-tag" style={{ backgroundColor: customization?.primaryColor || '#10b981' }}>
-            Welcome to our store
-          </span>
-          <h1>{business.name}</h1>
-          {business.description && <p>{business.description}</p>}
-        </div>
-      </section>
-
-      <section className="store-content">
-        <div className="store-filters">
-          <div className="search-bar">
-            <Search size={18} />
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+      <FadeIn delay={100}>
+        <section className="store-hero">
+          <div className="hero-content">
+            <span className="hero-tag" style={{ backgroundColor: customization?.primaryColor || '#10b981' }}>
+              Welcome to our store
+            </span>
+            <h1>{business.name}</h1>
+            {business.description && <p>{business.description}</p>}
           </div>
-          <div className="category-tabs">
-            {categories.map(category => (
-              <button
-                key={category}
-                className={`category-tab ${selectedCategory === category ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(category)}
-                style={{
-                  backgroundColor: selectedCategory === category ? (customization?.primaryColor || '#10b981') : 'transparent',
-                  color: selectedCategory === category ? 'white' : '#374151'
-                }}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-        </div>
+        </section>
+      </FadeIn>
 
-        {/* Featured Products Section */}
-        {customization?.showFeaturedProducts && customization.featuredProductIds && customization.featuredProductIds.length > 0 && (
-          <section style={{ marginBottom: '32px' }}>
+      <FadeIn delay={150}>
+        <section className="store-content">
+          <div className="store-filters">
+            <div className="search-bar">
+              <Search size={18} />
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            <div className="category-tabs">
+              {categories.map(category => (
+                <button
+                  key={category}
+                  className={`category-tab ${selectedCategory === category ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(category)}
+                  style={{
+                    backgroundColor: selectedCategory === category ? (customization?.primaryColor || '#10b981') : 'transparent',
+                    color: selectedCategory === category ? 'white' : '#374151'
+                  }}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      </FadeIn>
+
+      {/* Featured Products Section */}
+      {customization?.showFeaturedProducts && customization.featuredProductIds && customization.featuredProductIds.length > 0 && (
+        <FadeIn delay={200}>
+          <section style={{ marginBottom: '32px', width: 'min(1120px, calc(100% - 48px))', margin: '0 auto 32px' }}>
             <h2 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: '600' }}>Featured Products</h2>
-            <div className="products-grid">
-              {filteredProducts.filter(p => customization.featuredProductIds.includes(p.id)).map(product => (
+            <StaggeredFadeIn staggerDelay={100}>
+              <div className="products-grid">
+                {filteredProducts.filter(p => customization.featuredProductIds.includes(p.id)).map(product => (
                 <div
                   key={product.id}
                   className="store-product-card"
@@ -398,16 +408,20 @@ export default function StorePage() {
                   </div>
                 </div>
               ))}
-            </div>
-          </section>
+                </div>
+              </StaggeredFadeIn>
+            </section>
+          </FadeIn>
         )}
 
         {/* New Arrivals Section */}
         {customization?.showNewArrivals && customization.newArrivalProductIds && customization.newArrivalProductIds.length > 0 && (
-          <section style={{ marginBottom: '32px' }}>
-            <h2 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: '600' }}>New Arrivals</h2>
-            <div className="products-grid">
-              {filteredProducts.filter(p => customization.newArrivalProductIds.includes(p.id)).map(product => (
+          <FadeIn delay={250}>
+            <section style={{ marginBottom: '32px', width: 'min(1120px, calc(100% - 48px))', margin: '0 auto 32px' }}>
+              <h2 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: '600' }}>New Arrivals</h2>
+              <StaggeredFadeIn staggerDelay={100}>
+                <div className="products-grid">
+                  {filteredProducts.filter(p => customization.newArrivalProductIds.includes(p.id)).map(product => (
                 <div
                   key={product.id}
                   className="store-product-card"
@@ -475,140 +489,155 @@ export default function StorePage() {
                   </div>
                 </div>
               ))}
-            </div>
-          </section>
+                </div>
+              </StaggeredFadeIn>
+            </section>
+          </FadeIn>
         )}
 
         {/* All Products */}
-        <h2 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: '600' }}>All Products</h2>
-        {filteredProducts.length === 0 ? (
-          <div className="store-empty">
-            <ShoppingBag size={48} />
-            <h2>No products found</h2>
-            <p>Try adjusting your search or filters.</p>
-          </div>
-        ) : (
-          <div className="products-grid">
-            {filteredProducts.map(product => (
-              <div
-                key={product.id}
-                className="store-product-card"
-                onClick={() => {
-                  if (product.slug) {
-                    router.push(`/store/${params.slug}/products/${product.slug}`)
-                  } else {
-                    openProductModal(product)
-                  }
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                {product.image_url ? (
-                  <div
-                    className="store-product-image"
-                    style={{ backgroundImage: `url(${product.image_url})` }}
-                  />
-                ) : (
-                  <div className="store-product-image placeholder">
-                    <ShoppingBag size={32} />
+        <FadeIn delay={300}>
+          <section style={{ marginBottom: '32px', width: 'min(1120px, calc(100% - 48px))', margin: '0 auto 32px' }}>
+            <h2 style={{ marginBottom: '16px', fontSize: '20px', fontWeight: '600' }}>All Products</h2>
+            {filteredProducts.length === 0 ? (
+              <div className="store-empty">
+                <ShoppingBag size={48} />
+                <h2>No products found</h2>
+                <p>Try adjusting your search or filters.</p>
+              </div>
+            ) : (
+              <StaggeredFadeIn staggerDelay={100}>
+                <div className="products-grid">
+                  {filteredProducts.map(product => (
+                <div
+                  key={product.id}
+                  className="store-product-card"
+                  onClick={() => {
+                    if (product.slug) {
+                      router.push(`/store/${params.slug}/products/${product.slug}`)
+                    } else {
+                      openProductModal(product)
+                    }
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {product.image_url ? (
+                    <div
+                      className="store-product-image"
+                      style={{ backgroundImage: `url(${product.image_url})` }}
+                    />
+                  ) : (
+                    <div className="store-product-image placeholder">
+                      <ShoppingBag size={32} />
+                    </div>
+                  )}
+                  <div className="store-product-info">
+                    {product.category && <span className="store-product-category">{product.category}</span>}
+                    <h3>{product.name}</h3>
+                    <p className="store-product-price">₦{product.price.toLocaleString()}</p>
+                    {product.description && <p className="store-product-description">{product.description}</p>}
                   </div>
-                )}
-                <div className="store-product-info">
-                  {product.category && <span className="store-product-category">{product.category}</span>}
-                  <h3>{product.name}</h3>
-                  <p className="store-product-price">₦{product.price.toLocaleString()}</p>
-                  {product.description && <p className="store-product-description">{product.description}</p>}
-                </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  {product.slug && (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {product.slug && (
+                      <button
+                        onClick={(e) => shareProduct(product, e)}
+                        style={{
+                          flex: 1,
+                          padding: '10px',
+                          background: '#f3f4f6',
+                          color: '#374151',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontSize: '13px',
+                          fontWeight: '600',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        {copiedProductId === product.id ? <Check size={14} /> : <Share2 size={14} />}
+                        {copiedProductId === product.id ? 'Copied!' : 'Share'}
+                      </button>
+                    )}
                     <button
-                      onClick={(e) => shareProduct(product, e)}
-                      style={{
-                        flex: 1,
-                        padding: '10px',
-                        background: '#f3f4f6',
-                        color: '#374151',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '13px',
-                        fontWeight: '600',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px'
+                      className="add-to-cart-button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        addToCart(product)
+                      }}
+                      style={{ 
+                        flex: product.slug ? 1 : 'auto',
+                        backgroundColor: customization?.primaryColor || '#10b981' 
                       }}
                     >
-                      {copiedProductId === product.id ? <Check size={14} /> : <Share2 size={14} />}
-                      {copiedProductId === product.id ? 'Copied!' : 'Share'}
+                      <ShoppingBag size={16} /> Add to cart
                     </button>
-                  )}
-                  <button
-                    className="add-to-cart-button"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      addToCart(product)
-                    }}
-                    style={{ 
-                      flex: product.slug ? 1 : 'auto',
-                      backgroundColor: customization?.primaryColor || '#10b981' 
-                    }}
-                  >
-                    <ShoppingBag size={16} /> Add to cart
-                  </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+              ))}
+                </div>
+              </StaggeredFadeIn>
+          )}
+          </section>
+        </FadeIn>
 
       {/* About Section */}
       {customization?.showAboutSection && business.description && (
-        <section style={{
-          background: '#f9fafb',
-          padding: '32px',
-          marginBottom: '32px',
-          borderRadius: '8px'
-        }}>
-          <h2 style={{ marginBottom: '12px', fontSize: '20px', fontWeight: '600' }}>About {business.name}</h2>
-          <p style={{ color: '#6b7280', lineHeight: '1.6' }}>{business.description}</p>
-        </section>
+        <FadeIn delay={350}>
+          <section style={{
+            background: '#f9fafb',
+            padding: '32px',
+            marginBottom: '32px',
+            borderRadius: '8px',
+            width: 'min(1120px, calc(100% - 48px))',
+            margin: '0 auto 32px'
+          }}>
+            <h2 style={{ marginBottom: '12px', fontSize: '20px', fontWeight: '600' }}>About {business.name}</h2>
+            <p style={{ color: '#6b7280', lineHeight: '1.6' }}>{business.description}</p>
+          </section>
+        </FadeIn>
       )}
 
       {/* Contact Section */}
       {customization?.showContactSection && (
-        <section style={{
-          background: customization?.primaryColor || '#10b981',
-          color: 'white',
-          padding: '32px',
-          marginBottom: '32px',
-          borderRadius: '8px',
-          textAlign: 'center'
-        }}>
-          <h2 style={{ marginBottom: '12px', fontSize: '20px', fontWeight: '600' }}>Contact Us</h2>
-          <p style={{ marginBottom: '16px', opacity: 0.9 }}>
-            Have questions? Reach out to us via WhatsApp
-          </p>
-          <a
-            href={`https://wa.me/${business.whatsapp_number.replace(/\D/g, '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'white',
-              color: customization?.primaryColor || '#10b981',
-              padding: '12px 24px',
-              borderRadius: '6px',
-              textDecoration: 'none',
-              fontWeight: '600'
-            }}
-          >
-            <MessageCircle size={18} />
-            Chat on WhatsApp
-          </a>
-        </section>
+        <FadeIn delay={400}>
+          <section style={{
+            background: customization?.primaryColor || '#10b981',
+            color: 'white',
+            padding: '32px',
+            marginBottom: '32px',
+            borderRadius: '8px',
+            textAlign: 'center',
+            width: 'min(1120px, calc(100% - 48px))',
+            margin: '0 auto 32px'
+          }}>
+            <h2 style={{ marginBottom: '12px', fontSize: '20px', fontWeight: '600' }}>Contact Us</h2>
+            <p style={{ marginBottom: '16px', opacity: 0.9 }}>
+              Have questions? Reach out to us via WhatsApp
+            </p>
+            <a
+              href={`https://wa.me/${business.whatsapp_number.replace(/\D/g, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                background: 'white',
+                color: customization?.primaryColor || '#10b981',
+                padding: '12px 24px',
+                borderRadius: '6px',
+                textDecoration: 'none',
+                fontWeight: '600'
+              }}
+            >
+              <MessageCircle size={18} />
+              Chat on WhatsApp
+            </a>
+          </section>
+        </FadeIn>
       )}
 
       {cartOpen && (

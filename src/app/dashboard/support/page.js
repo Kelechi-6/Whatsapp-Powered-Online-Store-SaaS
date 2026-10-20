@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import { MessageCircle, Mail, Phone, ArrowRight, Lock, Star, Clock, Menu, X, ChevronDown } from 'lucide-react'
 import { UpgradePrompt } from '../../../components/UpgradePrompt'
+import { FadeIn, StaggeredFadeIn } from '../../../components/ScrollAnimation'
 
 export default function SupportPage() {
   const router = useRouter()
@@ -78,104 +79,111 @@ export default function SupportPage() {
         </div>
       </header>
       <section className="dashboard-content">
-        <div className="dashboard-header">
-          <div>
-            <h1>Support</h1>
-            <p>Get help with your store</p>
+        <FadeIn>
+          <div className="dashboard-header">
+            <div>
+              <h1>Support</h1>
+              <p>Get help with your store</p>
+            </div>
+            <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+              <a href="/dashboard" className="nav-link">Dashboard</a>
+              <a href="/dashboard/products" className="nav-link">Products</a>
+              <a href="/dashboard/analytics" className="nav-link">Analytics</a>
+              <a href="/dashboard/customization" className="nav-link">Customization</a>
+              <a href="/dashboard/support" className="nav-link">Support</a>
+              {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
+            </div>
+            <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
           </div>
-          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
-            <a href="/dashboard" className="nav-link">Dashboard</a>
-            <a href="/dashboard/products" className="nav-link">Products</a>
-            <a href="/dashboard/analytics" className="nav-link">Analytics</a>
-            <a href="/dashboard/customization" className="nav-link">Customization</a>
-            <a href="/dashboard/support" className="nav-link">Support</a>
-            {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
-          </div>
-          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
-        </div>
+        </FadeIn>
 
-        {!hasPrioritySupport && (
-          <UpgradePrompt
-            featureName="Priority Support"
-            currentPlan={subscription?.plan || 'free'}
-            requiredPlan="starter"
-            message="Get faster response times and dedicated support to help you grow your business."
-          />
-        )}
+        <FadeIn delay={100}>
+          {!hasPrioritySupport && (
+            <UpgradePrompt
+              featureName="Priority Support"
+              currentPlan={subscription?.plan || 'free'}
+              requiredPlan="starter"
+              message="Get faster response times and dedicated support to help you grow your business."
+            />
+          )}
+        </FadeIn>
 
         {hasPrioritySupport && (
           <>
-            <div style={{
-              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-              padding: '24px',
-              borderRadius: '12px',
-              marginBottom: '24px',
-              color: 'white'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <Star size={24} fill="white" />
-                <h2 style={{ margin: 0, fontSize: '20px' }}>Priority Support Active</h2>
-              </div>
-              <p style={{ margin: 0, opacity: 0.9 }}>
-                You're on the {subscription?.plan} plan with priority support. Expect faster response times and dedicated assistance.
-              </p>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+            <FadeIn delay={150}>
               <div style={{
-                background: 'white',
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
                 padding: '24px',
-                borderRadius: '8px',
-                border: '1px solid #e5e7eb',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-              onClick={() => window.location.href = 'mailto:support@shopmini.co'}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '8px',
-                    background: '#d1fae5',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <Mail size={24} style={{ color: '#10b981' }} />
-                  </div>
-                  <div>
-                    <h3 style={{ margin: 0, fontSize: '16px' }}>Email Support</h3>
-                    <p style={{ margin: 0, fontSize: '13px', color: '#6b7280' }}>support@shopmini.co</p>
-                  </div>
+                borderRadius: '12px',
+                marginBottom: '24px',
+                color: 'white'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
+                  <Star size={24} fill="white" />
+                  <h2 style={{ margin: 0, fontSize: '20px' }}>Priority Support Active</h2>
                 </div>
-                <p style={{ fontSize: '14px', color: '#374151', marginBottom: '12px' }}>
-                  Send us an email and get a response within 24 hours.
+                <p style={{ margin: 0, opacity: 0.9 }}>
+                  You're on the {subscription?.plan} plan with priority support. Expect faster response times and dedicated assistance.
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontSize: '14px', fontWeight: '600' }}>
-                  Contact us <ArrowRight size={14} />
-                </div>
               </div>
+            </FadeIn>
 
-              <div style={{
-                background: 'white',
-                padding: '24px',
-                borderRadius: '8px',
-                border: '1px solid #e5e7eb',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
-              }}
-              onClick={() => window.location.href = 'https://wa.me/2349033282350'}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                  <div style={{
-                    width: '48px',
-                    height: '48px',
-                    borderRadius: '8px',
-                    background: '#d1fae5',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
+            <StaggeredFadeIn staggerDelay={100}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
+                <div style={{
+                  background: 'white',
+                  padding: '24px',
+                  borderRadius: '8px',
+                  border: '1px solid #e5e7eb',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onClick={() => window.location.href = 'mailto:support@shopmini.co'}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '8px',
+                      background: '#d1fae5',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      <Mail size={24} style={{ color: '#10b981' }} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0, fontSize: '16px' }}>Email Support</h3>
+                      <p style={{ margin: 0, fontSize: '13px', color: '#6b7280' }}>support@shopmini.co</p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: '14px', color: '#374151', marginBottom: '12px' }}>
+                    Send us an email and get a response within 24 hours.
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontSize: '14px', fontWeight: '600' }}>
+                    Contact us <ArrowRight size={14} />
+                  </div>
+                </div>
+
+                <div style={{
+                  background: 'white',
+                  padding: '24px',
+                  borderRadius: '8px',
+                  border: '1px solid #e5e7eb',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onClick={() => window.location.href = 'https://wa.me/2349033282350'}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
+                    <div style={{
+                      width: '48px',
+                      height: '48px',
+                      borderRadius: '8px',
+                      background: '#d1fae5',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
                   }}>
                     <MessageCircle size={24} style={{ color: '#10b981' }} />
                   </div>
@@ -223,7 +231,77 @@ export default function SupportPage() {
                 </div>
               </div>
             </div>
+            </StaggeredFadeIn>
 
+            <FadeIn delay={250}>
+              <div style={{
+                background: 'white',
+                padding: '24px',
+                borderRadius: '8px',
+                border: '1px solid #e5e7eb',
+                marginTop: '24px'
+              }}>
+                <h3 style={{ marginBottom: '16px' }}>Frequently Asked Questions</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {[
+                    {
+                      id: 1,
+                      question: 'How do I upgrade my plan?',
+                      answer: 'Go to your dashboard and click "Upgrade" next to your current plan, or visit the subscription page.'
+                    },
+                    {
+                      id: 2,
+                      question: 'How do I add products?',
+                      answer: 'Navigate to the Products page and click "Add Product". You can also use bulk upload if on Starter or Pro plan.'
+                    },
+                    {
+                      id: 3,
+                      question: 'How do I customize my store?',
+                      answer: 'Go to the Setup page to update your store name, description, category, and location.'
+                    }
+                  ].map(faq => (
+                    <div key={faq.id} style={{ border: '1px solid #e5e7eb', borderRadius: '6px', overflow: 'hidden' }}>
+                      <button
+                        onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
+                        style={{
+                          width: '100%',
+                          padding: '12px 16px',
+                          background: '#f9fafb',
+                          border: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          color: '#374151',
+                          textAlign: 'left'
+                        }}
+                      >
+                        {faq.question}
+                        <ChevronDown
+                          size={16}
+                          style={{
+                            transition: 'transform 0.2s',
+                            transform: openFaq === faq.id ? 'rotate(180deg)' : 'rotate(0deg)'
+                          }}
+                        />
+                      </button>
+                      {openFaq === faq.id && (
+                        <div style={{ padding: '12px 16px', background: 'white', fontSize: '14px', color: '#6b7280' }}>
+                          {faq.answer}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FadeIn>
+          </>
+        )}
+
+        {!hasPrioritySupport && (
+          <FadeIn delay={200}>
             <div style={{
               background: 'white',
               padding: '24px',
@@ -231,85 +309,20 @@ export default function SupportPage() {
               border: '1px solid #e5e7eb',
               marginTop: '24px'
             }}>
-              <h3 style={{ marginBottom: '16px' }}>Frequently Asked Questions</h3>
+              <h3 style={{ marginBottom: '16px' }}>Community Support</h3>
+              <p style={{ fontSize: '14px', color: '#374151', marginBottom: '16px' }}>
+                As a free plan user, you can access our community resources:
+              </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {[
-                  {
-                    id: 1,
-                    question: 'How do I upgrade my plan?',
-                    answer: 'Go to your dashboard and click "Upgrade" next to your current plan, or visit the subscription page.'
-                  },
-                  {
-                    id: 2,
-                    question: 'How do I add products?',
-                    answer: 'Navigate to the Products page and click "Add Product". You can also use bulk upload if on Starter or Pro plan.'
-                  },
-                  {
-                    id: 3,
-                    question: 'How do I customize my store?',
-                    answer: 'Go to the Setup page to update your store name, description, category, and location.'
-                  }
-                ].map(faq => (
-                  <div key={faq.id} style={{ border: '1px solid #e5e7eb', borderRadius: '6px', overflow: 'hidden' }}>
-                    <button
-                      onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
-                      style={{
-                        width: '100%',
-                        padding: '12px 16px',
-                        background: '#f9fafb',
-                        border: 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        cursor: 'pointer',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: '#374151',
-                        textAlign: 'left'
-                      }}
-                    >
-                      {faq.question}
-                      <ChevronDown
-                        size={16}
-                        style={{
-                          transition: 'transform 0.2s',
-                          transform: openFaq === faq.id ? 'rotate(180deg)' : 'rotate(0deg)'
-                        }}
-                      />
-                    </button>
-                    {openFaq === faq.id && (
-                      <div style={{ padding: '12px 16px', background: 'white', fontSize: '14px', color: '#6b7280' }}>
-                        {faq.answer}
-                      </div>
-                    )}
-                  </div>
-                ))}
+                <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', textDecoration: 'none' }}>
+                  <MessageCircle size={16} /> Join our WhatsApp community
+                </a>
+                <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', textDecoration: 'none' }}>
+                  <Mail size={16} /> Browse our help articles
+                </a>
               </div>
             </div>
-          </>
-        )}
-
-        {!hasPrioritySupport && (
-          <div style={{
-            background: 'white',
-            padding: '24px',
-            borderRadius: '8px',
-            border: '1px solid #e5e7eb',
-            marginTop: '24px'
-          }}>
-            <h3 style={{ marginBottom: '16px' }}>Community Support</h3>
-            <p style={{ fontSize: '14px', color: '#374151', marginBottom: '16px' }}>
-              As a free plan user, you can access our community resources:
-            </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', textDecoration: 'none' }}>
-                <MessageCircle size={16} /> Join our WhatsApp community
-              </a>
-              <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#10b981', textDecoration: 'none' }}>
-                <Mail size={16} /> Browse our help articles
-              </a>
-            </div>
-          </div>
+          </FadeIn>
         )}
       </section>
     </main>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import { Palette, Layout, Lock, ArrowRight, Save, Menu, X } from 'lucide-react'
 import { UpgradePrompt } from '../../../components/UpgradePrompt'
+import { FadeIn, StaggeredFadeIn } from '../../../components/ScrollAnimation'
 
 export default function CustomizationPage() {
   const router = useRouter()
@@ -134,98 +135,105 @@ export default function CustomizationPage() {
         </div>
       </header>
       <section className="dashboard-content">
-        <div className="dashboard-header">
-          <div>
-            <h1>Store Customization</h1>
-            <p>Customize your storefront appearance and layout</p>
+        <FadeIn>
+          <div className="dashboard-header">
+            <div>
+              <h1>Store Customization</h1>
+              <p>Customize your storefront appearance and layout</p>
+            </div>
+            <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+              <a href="/dashboard" className="nav-link">Dashboard</a>
+              <a href="/dashboard/products" className="nav-link">Products</a>
+              <a href="/dashboard/analytics" className="nav-link">Analytics</a>
+              <a href="/dashboard/customization" className="nav-link">Customization</a>
+              <a href="/dashboard/support" className="nav-link">Support</a>
+              {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
+            </div>
+            <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
           </div>
-          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
-            <a href="/dashboard" className="nav-link">Dashboard</a>
-            <a href="/dashboard/products" className="nav-link">Products</a>
-            <a href="/dashboard/analytics" className="nav-link">Analytics</a>
-            <a href="/dashboard/customization" className="nav-link">Customization</a>
-            <a href="/dashboard/support" className="nav-link">Support</a>
-            {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
-          </div>
-          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
-        </div>
+        </FadeIn>
 
-        {!hasAdvancedCustomization && (
-          <UpgradePrompt
-            featureName="Advanced Store Customization"
-            currentPlan={subscription?.plan || 'free'}
-            requiredPlan="pro"
-            message="Get full control over your store's theme, colors, layout, and sections. Create a unique storefront that matches your brand."
-          />
-        )}
+        <FadeIn delay={100}>
+          {!hasAdvancedCustomization && (
+            <UpgradePrompt
+              featureName="Advanced Store Customization"
+              currentPlan={subscription?.plan || 'free'}
+              requiredPlan="pro"
+              message="Get full control over your store's theme, colors, layout, and sections. Create a unique storefront that matches your brand."
+            />
+          )}
+        </FadeIn>
 
         {hasAdvancedCustomization && (
           <>
-            {success && (
-              <div style={{
-                background: '#d1fae5',
-                border: '1px solid #10b981',
-                borderRadius: '8px',
-                padding: '12px 16px',
-                marginBottom: '20px',
-                color: '#065f46'
-              }}>
-                {success}
-              </div>
-            )}
+            <FadeIn delay={150}>
+              {success && (
+                <div style={{
+                  background: '#d1fae5',
+                  border: '1px solid #10b981',
+                  borderRadius: '8px',
+                  padding: '12px 16px',
+                  marginBottom: '20px',
+                  color: '#065f46'
+                }}>
+                  {success}
+                </div>
+              )}
+            </FadeIn>
 
-            <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {/* Theme Selection */}
-              <div style={{ background: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Palette size={20} style={{ color: '#10b981' }} />
-                  Theme & Colors
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
-                      Theme
-                    </label>
-                    <select
-                      value={customization.theme}
-                      onChange={(e) => setCustomization({ ...customization, theme: e.target.value })}
-                      style={{
-                        width: '100%',
-                        padding: '10px',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '6px',
-                        fontSize: '14px'
-                      }}
-                    >
-                      <option value="default">Default</option>
-                      <option value="modern">Modern</option>
-                      <option value="minimal">Minimal</option>
-                      <option value="bold">Bold</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
-                      Primary Color
-                    </label>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                      <input
-                        type="color"
-                        value={customization.primaryColor}
-                        onChange={(e) => setCustomization({ ...customization, primaryColor: e.target.value })}
-                        style={{ width: '60px', height: '40px', border: '1px solid #e5e7eb', borderRadius: '6px', cursor: 'pointer' }}
-                      />
-                      <input
-                        type="text"
-                        value={customization.primaryColor}
-                        onChange={(e) => setCustomization({ ...customization, primaryColor: e.target.value })}
+            <StaggeredFadeIn staggerDelay={100}>
+              <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {/* Theme Selection */}
+                <div style={{ background: 'white', padding: '24px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                  <h3 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Palette size={20} style={{ color: '#10b981' }} />
+                    Theme & Colors
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
+                        Theme
+                      </label>
+                      <select
+                        value={customization.theme}
+                        onChange={(e) => setCustomization({ ...customization, theme: e.target.value })}
                         style={{
-                          flex: 1,
+                          width: '100%',
                           padding: '10px',
                           border: '1px solid #e5e7eb',
                           borderRadius: '6px',
                           fontSize: '14px'
                         }}
-                      />
+                      >
+                        <option value="default">Default</option>
+                        <option value="modern">Modern</option>
+                        <option value="minimal">Minimal</option>
+                        <option value="bold">Bold</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
+                        Primary Color
+                      </label>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <input
+                          type="color"
+                          value={customization.primaryColor}
+                          onChange={(e) => setCustomization({ ...customization, primaryColor: e.target.value })}
+                          style={{ width: '60px', height: '40px', border: '1px solid #e5e7eb', borderRadius: '6px', cursor: 'pointer' }}
+                        />
+                        <input
+                          type="text"
+                          value={customization.primaryColor}
+                          onChange={(e) => setCustomization({ ...customization, primaryColor: e.target.value })}
+                          style={{
+                            flex: 1,
+                            padding: '10px',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '6px',
+                            fontSize: '14px'
+                          }}
+                        />
                     </div>
                   </div>
                 </div>
@@ -337,6 +345,7 @@ export default function CustomizationPage() {
                 {saving ? 'Saving...' : 'Save Changes'}
               </button>
             </form>
+            </StaggeredFadeIn>
           </>
         )}
       </section>

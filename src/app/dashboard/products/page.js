@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import { Plus, Edit, Trash2, Store, ArrowRight, X, Image as ImageIcon, Lock, Upload, Menu } from 'lucide-react'
 import { canAddProduct, getRemainingProducts, hasFeature } from '../../../lib/plans'
+import { FadeIn, StaggeredFadeIn } from '../../../components/ScrollAnimation'
 
 export default function ProductsPage() {
   const router = useRouter()
@@ -239,120 +240,136 @@ export default function ProductsPage() {
         </div>
       </header>
       <section className="dashboard-content">
-        <div className="dashboard-header">
-          <div>
-            <h1>Products</h1>
-            <p>Manage your product catalog</p>
+        <FadeIn>
+          <div className="dashboard-header">
+            <div>
+              <h1>Products</h1>
+              <p>Manage your product catalog</p>
+            </div>
+            <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+              <a href="/dashboard" className="nav-link">Dashboard</a>
+              <a href="/dashboard/products" className="nav-link">Products</a>
+              <a href="/dashboard/analytics" className="nav-link">Analytics</a>
+              <a href="/dashboard/customization" className="nav-link">Customization</a>
+              <a href="/dashboard/support" className="nav-link">Support</a>
+              {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
+            </div>
+            <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
           </div>
-          <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
-            <a href="/dashboard" className="nav-link">Dashboard</a>
-            <a href="/dashboard/products" className="nav-link">Products</a>
-            <a href="/dashboard/analytics" className="nav-link">Analytics</a>
-            <a href="/dashboard/customization" className="nav-link">Customization</a>
-            <a href="/dashboard/support" className="nav-link">Support</a>
-            {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
-          </div>
-          <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
-        </div>
+        </FadeIn>
 
-        {status.error && <p className="auth-error">{status.error}</p>}
-        {status.success && <div className="auth-success"><p>{status.success}</p></div>}
+        <FadeIn delay={100}>
+          {status.error && <p className="auth-error">{status.error}</p>}
+          {status.success && <div className="auth-success"><p>{status.success}</p></div>}
+        </FadeIn>
 
         {!canAddMore && remainingProducts !== null && (
-          <div style={{
-            background: '#fff3cd',
-            border: '1px solid #ffc107',
-            borderRadius: '8px',
-            padding: '12px 16px',
-            marginBottom: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
-            <Lock size={20} style={{ color: '#856404' }} />
-            <div>
-              <strong style={{ color: '#856404' }}>Product limit reached</strong>
-              <p style={{ margin: '4px 0 0 0', color: '#856404', fontSize: '13px' }}>
-                You've reached your {subscription?.plan || 'free'} plan's limit of {products.length} products. 
-                <button 
-                  onClick={() => router.push('/dashboard/subscription?upgrade=true')}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: '#0066cc',
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                    padding: 0,
-                    marginLeft: '4px'
-                  }}
-                >
-                  Upgrade to add more
-                </button>
-              </p>
+          <FadeIn delay={150}>
+            <div style={{
+              background: '#fff3cd',
+              border: '1px solid #ffc107',
+              borderRadius: '8px',
+              padding: '12px 16px',
+              marginBottom: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <Lock size={20} style={{ color: '#856404' }} />
+              <div>
+                <strong style={{ color: '#856404' }}>Product limit reached</strong>
+                <p style={{ margin: '4px 0 0 0', color: '#856404', fontSize: '13px' }}>
+                  You've reached your {subscription?.plan || 'free'} plan's limit of {products.length} products. 
+                  <button 
+                    onClick={() => router.push('/dashboard/subscription?upgrade=true')}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      color: '#0066cc',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      padding: 0,
+                      marginLeft: '4px'
+                    }}
+                  >
+                    Upgrade to add more
+                  </button>
+                </p>
+              </div>
             </div>
-          </div>
+          </FadeIn>
         )}
 
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <button
-            className="button button-dark"
-            onClick={() => setShowForm(true)}
-            disabled={!canAddMore}
-            style={{ opacity: !canAddMore ? 0.5 : 1, cursor: !canAddMore ? 'not-allowed' : 'pointer' }}
-          >
-            <Plus size={16} /> Add Product
-          </button>
-
-          {canBulkUpload && (
+        <FadeIn delay={200}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
             <button
-              className="button button-outline"
-              onClick={() => {/* TODO: Implement bulk upload modal */}}
-              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              className="button button-dark"
+              onClick={() => setShowForm(true)}
+              disabled={!canAddMore}
+              style={{ opacity: !canAddMore ? 0.5 : 1, cursor: !canAddMore ? 'not-allowed' : 'pointer' }}
             >
-              <Upload size={16} /> Bulk Upload
+              <Plus size={16} /> Add Product
             </button>
-          )}
-        </div>
 
-        {canAddMore && remainingProducts !== null && (
-          <p style={{ fontSize: '12px', color: '#69756f', marginTop: '8px' }}>
-            {remainingProducts} product{remainingProducts !== 1 ? 's' : ''} remaining on your {subscription?.plan || 'free'} plan
-          </p>
-        )}
+            {canBulkUpload && (
+              <button
+                className="button button-outline"
+                onClick={() => {/* TODO: Implement bulk upload modal */}}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <Upload size={16} /> Bulk Upload
+              </button>
+            )}
+          </div>
+
+          {canAddMore && remainingProducts !== null && (
+            <p style={{ fontSize: '12px', color: '#69756f', marginTop: '8px' }}>
+              {remainingProducts} product{remainingProducts !== 1 ? 's' : ''} remaining on your {subscription?.plan || 'free'} plan
+            </p>
+          )}
+        </FadeIn>
 
         {products.length === 0 && !status.loading ? (
-          <div className="dashboard-empty">
-            <Store className="empty-icon" size={48} />
-            <h2>No products yet</h2>
-            <p>Add your first product to start selling</p>
-          </div>
+          <FadeIn delay={250}>
+            <div className="dashboard-empty">
+              <Store className="empty-icon" size={48} />
+              <h2>No products yet</h2>
+              <p>Add your first product to start selling</p>
+            </div>
+          </FadeIn>
         ) : (
-          <div className="products-grid">
-            {products.map(product => (
-              <div key={product.id} className="product-card">
-                {product.image_url ? (
-                  <div className="product-image" style={{ backgroundImage: `url(${product.image_url})` }} />
-                ) : (
-                  <div className="product-image placeholder">
-                    <ImageIcon size={32} />
+          <StaggeredFadeIn staggerDelay={100}>
+            <div className="products-grid">
+              {products.map((product) => (
+                <div key={product.id} className="product-card">
+                  <div className="product-image" style={{ backgroundImage: product.image_url ? `url(${product.image_url})` : 'none' }}>
+                    {!product.image_url && <ImageIcon className="placeholder" size={32} />}
                   </div>
-                )}
-                <div className="product-info">
-                  <h3>{product.name}</h3>
-                  <p className="product-price">₦{product.price.toLocaleString()}</p>
-                  {product.description && <p className="product-description">{product.description}</p>}
+                  <div className="product-info">
+                    <h3>{product.name}</h3>
+                    <p className="product-price">₦{product.price.toLocaleString()}</p>
+                    <p className="product-category">{product.category || 'Uncategorized'}</p>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                      <button
+                        className="button button-outline"
+                        onClick={() => openEditForm(product)}
+                        style={{ flex: 1, padding: '8px' }}
+                      >
+                        <Edit size={14} />
+                      </button>
+                      <button
+                        className="button button-outline"
+                        onClick={() => deleteProduct(product.id)}
+                        style={{ padding: '8px', borderColor: '#fee2e2', color: '#dc2626' }}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div className="product-actions">
-                  <button className="button-icon" onClick={() => openEditForm(product)} title="Edit">
-                    <Edit size={16} />
-                  </button>
-                  <button className="button-icon danger" onClick={() => handleDelete(product.id)} title="Delete">
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </StaggeredFadeIn>
         )}
 
         {showForm && (
