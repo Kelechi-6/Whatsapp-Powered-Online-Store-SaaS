@@ -80,11 +80,18 @@ export async function GET(request) {
 
       console.log('Updating subscription for business:', businessData.id, 'to plan:', plan)
 
+      const startDate = new Date().toISOString()
+      const endDate = new Date()
+      endDate.setMonth(endDate.getMonth() + 1)
+      const endDateISO = endDate.toISOString()
+
       const { error: subError } = await supabaseAdmin
         .from('subscriptions')
         .update({
           plan,
           payment_reference: reference,
+          start_date: startDate,
+          end_date: endDateISO,
         })
         .eq('business_id', businessData.id)
 
