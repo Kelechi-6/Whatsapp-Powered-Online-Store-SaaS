@@ -17,6 +17,15 @@ export default function CustomizationPage() {
   const [products, setProducts] = useState([])
   const [menuOpen, setMenuOpen] = useState(false)
 
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.classList.add('menu-open')
+    } else {
+      document.body.classList.remove('menu-open')
+    }
+    return () => document.body.classList.remove('menu-open')
+  }, [menuOpen])
+
   const [customization, setCustomization] = useState({
     theme: 'default',
     primaryColor: '#10b981',
@@ -135,21 +144,21 @@ export default function CustomizationPage() {
         </div>
       </header>
       <section className="dashboard-content">
+        <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
+          <a href="/dashboard" className="nav-link">Dashboard</a>
+          <a href="/dashboard/products" className="nav-link">Products</a>
+          <a href="/dashboard/analytics" className="nav-link">Analytics</a>
+          <a href="/dashboard/customization" className="nav-link">Customization</a>
+          <a href="/dashboard/support" className="nav-link">Support</a>
+          {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
+        </div>
+        <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
         <FadeIn>
           <div className="dashboard-header">
             <div>
               <h1>Store Customization</h1>
               <p>Customize your storefront appearance and layout</p>
             </div>
-            <div className={`dashboard-nav ${menuOpen ? 'is-open' : ''}`}>
-              <a href="/dashboard" className="nav-link">Dashboard</a>
-              <a href="/dashboard/products" className="nav-link">Products</a>
-              <a href="/dashboard/analytics" className="nav-link">Analytics</a>
-              <a href="/dashboard/customization" className="nav-link">Customization</a>
-              <a href="/dashboard/support" className="nav-link">Support</a>
-              {business && <a href={`/store/${business.slug}`} className="nav-link" target="_blank">View Store <ArrowRight size={14} /></a>}
-            </div>
-            <div className={`dashboard-nav-overlay ${menuOpen ? 'is-open' : ''}`} onClick={() => setMenuOpen(false)} />
           </div>
         </FadeIn>
 

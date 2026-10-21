@@ -82,6 +82,15 @@ function getFeatureList(planId) {
 export default function Page() {
   const [demoOpen, setDemoOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.classList.add('menu-open')
+    } else {
+      document.body.classList.remove('menu-open')
+    }
+    return () => document.body.classList.remove('menu-open')
+  }, [menuOpen])
   const [openFaq, setOpenFaq] = useState(0)
   const [copied, setCopied] = useState(false)
 

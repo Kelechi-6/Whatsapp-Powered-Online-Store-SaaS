@@ -276,16 +276,20 @@ export default function StorePage() {
               <small>{business.location || 'Online Store'}</small>
             </div>
           </div>
-          <button
-            className="cart-button"
-            onClick={() => setCartOpen(true)}
-            style={{ backgroundColor: customization?.primaryColor || '#10b981' }}
-          >
-            <ShoppingBag size={20} />
-            {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-          </button>
         </nav>
       </FadeIn>
+
+      {/* Floating Cart Button */}
+      {cartCount > 0 && (
+        <button
+          className="floating-cart-button"
+          onClick={() => setCartOpen(true)}
+          style={{ backgroundColor: customization?.primaryColor || '#10b981' }}
+        >
+          <ShoppingBag size={24} />
+          <span className="floating-cart-badge">{cartCount}</span>
+        </button>
+      )}
 
       <FadeIn delay={100}>
         <section className="store-hero">
@@ -638,7 +642,7 @@ export default function StorePage() {
       )}
 
       {cartOpen && (
-        <div className="cart-sidebar">
+        <div className={`cart-sidebar ${cartOpen ? 'is-open' : ''}`}>
           <div className="cart-header">
             <h2>Your Cart</h2>
             <button onClick={() => setCartOpen(false)} className="close-cart">
@@ -707,7 +711,7 @@ export default function StorePage() {
       )}
 
       {cartOpen && (
-        <div className="cart-overlay" onClick={() => setCartOpen(false)} />
+        <div className={`cart-overlay ${cartOpen ? 'is-open' : ''}`} onClick={() => setCartOpen(false)} />
       )}
 
       {/* Product Detail Modal */}

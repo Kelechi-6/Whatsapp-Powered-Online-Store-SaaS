@@ -27,8 +27,8 @@ export default function LoadingIcon({ size = 64 }) {
         </defs>
         <rect width="64" height="64" rx="14" fill="url(#bg)"/>
         <path d="M18 24h28l3 24a4 4 0 0 1-4 4.5H19a4 4 0 0 1-4-4.5z" fill="#fff"/>
-        <path d="M24 28v-6a8 8 0 0 1 16 0v6" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-        <path d="M25 38q7 8 14 0" fill="none" stroke="#7C3AED" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M24 28v-6a8 8 0 0 1 16 0v6" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round"/>
+        <path d="M25 38q7 8 14 0" fill="none" stroke="#7C3AED" strokeWidth="3.5" strokeLinecap="round"/>
       </svg>
       <style jsx>{`
         @keyframes spin {
