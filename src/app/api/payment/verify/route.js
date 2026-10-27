@@ -92,7 +92,6 @@ export async function GET(request) {
           payment_reference: reference,
           start_date: startDate,
           end_date: endDateISO,
-          user_id: userId,
         })
         .eq('business_id', businessData.id)
 
@@ -178,11 +177,26 @@ export async function GET(request) {
         // Redirect to dashboard
         return NextResponse.redirect(new URL('/dashboard', baseUrl))
       } else {
-        // User has no business, redirect to setup with plan info and reference
-        // Don't create subscription yet - it will be created in setup with proper business_id
-        console.log('User has no business, redirecting to setup with plan:', plan)
+        // User has no business, create subscription with null business_id and redirect to setup
+        console.log('User has no business, redirecting to setup')
+        
+        const { error: subError } = await supabaseAdmin.from('subscriptions').insert({
+          business_id: null, // Will be updated after business creation
+          plan,
+          status: 'active',
+          payment_reference: reference,
+        })
+
+        if (subError) {
+          console.error('Subscription creation error:', subError)
+          return NextResponse.redirect(
+            new URL('/dashboard/subscription?error=subscription_failed', baseUrl)
+          )
+        }
+
+        // Redirect to setup
         return NextResponse.redirect(
-          new URL(`/dashboard/setup?plan=${plan}&payment=success&reference=${reference}`, baseUrl)
+          new URL(`/dashboard/setup?plan=${plan}`, baseUrl)
         )
       }
     }

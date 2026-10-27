@@ -17,7 +17,7 @@ function createAdminClient() {
 export async function POST(request) {
   try {
     const body = await request.json()
-    const { businessId, plan, userId, paymentReference } = body
+    const { businessId, plan } = body
 
     if (!businessId || !plan) {
       return NextResponse.json(
@@ -28,32 +28,31 @@ export async function POST(request) {
 
     const supabaseAdmin = createAdminClient()
 
-    // Check if subscription already exists for this business
-    const { data: businessSub } = await supabaseAdmin
+    // First check if there's an existing subscription with null business_id
+    const { data: existingSub } = await supabaseAdmin
       .from('subscriptions')
       .select('*')
-      .eq('business_id', businessId)
-      .maybeSingle()
+      .is('business_id', null)
+      .limit(1)
 
-    if (businessSub) {
+    if (existingSub && existingSub.length > 0) {
       // Calculate end date based on plan (1 month for paid plans)
       const startDate = new Date().toISOString()
       const endDate = new Date()
       endDate.setMonth(endDate.getMonth() + 1)
       const endDateISO = endDate.toISOString()
 
-      // Update existing subscription
+      // Update existing subscription with business_id and plan
       const { error: updateError } = await supabaseAdmin
         .from('subscriptions')
         .update({
+          business_id: businessId,
           plan: plan,
           status: 'active',
           start_date: startDate,
-          end_date: endDateISO,
-          payment_reference: paymentReference || businessSub.payment_reference,
-          user_id: userId || businessSub.user_id,
+          end_date: endDateISO
         })
-        .eq('id', businessSub.id)
+        .eq('id', existingSub[0].id)
 
       if (updateError) {
         console.error('Subscription update error:', updateError)
@@ -63,31 +62,64 @@ export async function POST(request) {
         )
       }
     } else {
-      // Calculate end date based on plan (1 month for paid plans)
-      const startDate = new Date().toISOString()
-      const endDate = new Date()
-      endDate.setMonth(endDate.getMonth() + 1)
-      const endDateISO = endDate.toISOString()
-
-      // Create new subscription
-      const { error: insertError } = await supabaseAdmin
+      // Check if subscription already exists for this business
+      const { data: businessSub } = await supabaseAdmin
         .from('subscriptions')
-        .insert({
-          business_id: businessId,
-          plan: plan,
-          status: 'active',
-          payment_reference: paymentReference,
-          start_date: startDate,
-          end_date: endDateISO,
-          user_id: userId,
-        })
+        .select('*')
+        .eq('business_id', businessId)
+        .maybeSingle()
 
-      if (insertError) {
-        console.error('Subscription creation error:', insertError)
-        return NextResponse.json(
-          { error: 'Failed to create subscription' },
-          { status: 500 }
-        )
+      if (businessSub) {
+        // Calculate end date based on plan (1 month for paid plans)
+        const startDate = new Date().toISOString()
+        const endDate = new Date()
+        endDate.setMonth(endDate.getMonth() + 1)
+        const endDateISO = endDate.toISOString()
+
+        // Update existing subscription
+        const { error: updateError } = await supabaseAdmin
+          .from('subscriptions')
+          .update({
+            plan: plan,
+            status: 'active',
+            start_date: startDate,
+            end_date: endDateISO
+          })
+          .eq('id', businessSub.id)
+
+        if (updateError) {
+          console.error('Subscription update error:', updateError)
+          return NextResponse.json(
+            { error: 'Failed to update subscription' },
+            { status: 500 }
+          )
+        }
+      } else {
+        // Calculate end date based on plan (1 month for paid plans)
+        const startDate = new Date().toISOString()
+        const endDate = new Date()
+        endDate.setMonth(endDate.getMonth() + 1)
+        const endDateISO = endDate.toISOString()
+
+        // Create new subscription
+        const { error: insertError } = await supabaseAdmin
+          .from('subscriptions')
+          .insert({
+            business_id: businessId,
+            plan: plan,
+            status: 'active',
+            payment_reference: null,
+            start_date: startDate,
+            end_date: endDateISO
+          })
+
+        if (insertError) {
+          console.error('Subscription creation error:', insertError)
+          return NextResponse.json(
+            { error: 'Failed to create subscription' },
+            { status: 500 }
+          )
+        }
       }
     }
 

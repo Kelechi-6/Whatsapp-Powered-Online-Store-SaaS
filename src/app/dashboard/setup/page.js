@@ -10,7 +10,6 @@ function SetupContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [selectedPlan, setSelectedPlan] = useState(null)
-  const [paymentSuccess, setPaymentSuccess] = useState(false)
   
   const [form, setForm] = useState({
     whatsappNumber: '',
@@ -25,15 +24,8 @@ function SetupContent() {
 
   useEffect(() => {
     const plan = searchParams.get('plan')
-    const payment = searchParams.get('payment')
-    const reference = searchParams.get('reference')
     if (plan) {
       setSelectedPlan(plan)
-    }
-    if (payment === 'success' && reference) {
-      setPaymentSuccess(true)
-      // Store the payment reference for later use
-      sessionStorage.setItem('paymentReference', reference)
     }
   }, [searchParams])
 
@@ -98,53 +90,49 @@ function SetupContent() {
       }
 
       // Update or create subscription with business_id
-      const paymentReference = sessionStorage.getItem('paymentReference')
-      
       if (selectedPlan) {
         // Use API route to handle subscription with admin privileges
-        const response = await fetch('/api/subscription/update', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            businessId: businessData.id,
-            plan: selectedPlan,
-            userId: user.id,
-            paymentReference: paymentReference
-          }),
-        })
+        try {
+          const response = await fetch('/api/subscription/update', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              businessId: businessData.id,
+              plan: selectedPlan
+            }),
+          })
 
-        if (!response.ok) {
-          const errorData = await response.json()
-          console.error('Failed to update subscription:', errorData.error)
-          setStatus({ error: errorData.error || 'Failed to update subscription', loading: false, success: false })
-          return
+          if (!response.ok) {
+            const errorData = await response.json()
+            console.error('Failed to update subscription:', errorData.error)
+          }
+        } catch (error) {
+          console.error('Error calling subscription API:', error)
         }
       } else {
         // If no plan selected, create default free subscription
-        const response = await fetch('/api/subscription/update', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            businessId: businessData.id,
-            plan: 'free',
-            userId: user.id
-          }),
-        })
+        try {
+          const response = await fetch('/api/subscription/update', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              businessId: businessData.id,
+              plan: 'free'
+            }),
+          })
 
-        if (!response.ok) {
-          const errorData = await response.json()
-          console.error('Failed to create default subscription:', errorData.error)
-          setStatus({ error: errorData.error || 'Failed to create subscription', loading: false, success: false })
-          return
+          if (!response.ok) {
+            const errorData = await response.json()
+            console.error('Failed to create default subscription:', errorData.error)
+          }
+        } catch (error) {
+          console.error('Error calling subscription API:', error)
         }
       }
-
-      // Clear payment reference from session storage
-      sessionStorage.removeItem('paymentReference')
 
       setStatus({ error: '', loading: false, success: true })
       
