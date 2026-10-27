@@ -39,6 +39,25 @@ function SignUpContent() {
     })
     if (error) return setStatus({ error: formatAuthError(error), loading: false, success: false })
     if (data.session) {
+      // Create subscription with null business_id (will be updated after business creation)
+      try {
+        const response = await fetch('/api/subscription/create-without-business', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: data.user.id,
+            plan: selectedPlan || 'free'
+          }),
+        })
+        if (!response.ok) {
+          console.error('Failed to create subscription:', await response.json())
+        }
+      } catch (error) {
+        console.error('Error creating subscription:', error)
+      }
+
       if (selectedPlan) {
         router.push(`/dashboard/setup?plan=${selectedPlan}`)
       } else {
