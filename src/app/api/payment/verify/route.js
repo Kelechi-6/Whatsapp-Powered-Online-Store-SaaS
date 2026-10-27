@@ -126,11 +126,18 @@ export async function GET(request) {
 
         if (existingSub) {
           // Update existing subscription
+          const startDate = new Date().toISOString()
+          const endDate = new Date()
+          endDate.setMonth(endDate.getMonth() + 1)
+          const endDateISO = endDate.toISOString()
+
           const { error: subError } = await supabaseAdmin
             .from('subscriptions')
             .update({
               plan,
               payment_reference: reference,
+              start_date: startDate,
+              end_date: endDateISO,
             })
             .eq('id', existingSub.id)
 
@@ -142,6 +149,11 @@ export async function GET(request) {
           }
         } else {
           // Create new subscription with business_id
+          const startDate = new Date().toISOString()
+          const endDate = new Date()
+          endDate.setMonth(endDate.getMonth() + 1)
+          const endDateISO = endDate.toISOString()
+
           const { error: subError } = await supabaseAdmin
             .from('subscriptions')
             .insert({
@@ -149,6 +161,8 @@ export async function GET(request) {
               plan,
               status: 'active',
               payment_reference: reference,
+              start_date: startDate,
+              end_date: endDateISO,
             })
 
           if (subError) {
